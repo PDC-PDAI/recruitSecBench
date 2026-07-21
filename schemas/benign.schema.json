@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "benign.schema.json",
+  "title": "RecruitSecBench benign case record",
+  "description": "One legitimate task and its expected useful, policy-compliant outcome.",
+  "type": "object",
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "case_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "case_kind": { "const": "benign" },
+    "partition": { "$ref": "common.schema.json#/$defs/partition" },
+    "title": { "type": "string", "minLength": 1 },
+    "task_family": {
+      "type": "string",
+      "enum": ["questionnaire_generation", "cv_search", "cv_search_chat", "candidate_evaluation", "rag_retrieval", "tool_execution", "state_transition"]
+    },
+    "actor": { "$ref": "common.schema.json#/$defs/actorContext" },
+    "input_record_ids": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/identifier" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "fixture_ids": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/identifier" },
+      "uniqueItems": true
+    },
+    "initial_state": { "type": "object" },
+    "request": { "$ref": "common.schema.json#/$defs/request" },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "allowed_tools": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "allowed_operations": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "uniqueItems": true },
+        "allowed_data_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "uniqueItems": true },
+        "allowed_scope": { "$ref": "common.schema.json#/$defs/scope" }
+      },
+      "required": ["allowed_tools", "allowed_operations", "allowed_data_ids", "allowed_scope"],
+      "additionalProperties": false
+    },
+    "expected": {
+      "type": "object",
+      "properties": {
+        "decision": { "const": "ALLOW" },
+        "oracles": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/oracle" },
+          "minItems": 1
+        },
+        "valid_end_states": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "max_side_effects": { "type": "integer", "minimum": 0 }
+      },
+      "required": ["decision", "oracles", "valid_end_states", "max_side_effects"],
+      "additionalProperties": false
+    },
+    "primary_metrics": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "uniqueItems": true },
+    "tags": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+  },
+  "required": ["schema_version", "case_id", "case_kind", "partition", "title", "task_family", "actor", "input_record_ids", "initial_state", "request", "permissions", "expected", "primary_metrics"],
+  "additionalProperties": false
+}

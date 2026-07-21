@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "audit.schema.json",
+  "title": "RecruitSecBench audit trace record",
+  "description": "One execution trace with deterministic outcomes, minimized auditor view, independent human annotations, and optional auditor predictions.",
+  "type": "object",
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "trace_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "run_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "case_id": { "$ref": "common.schema.json#/$defs/identifier" },
+    "condition": { "type": "string", "enum": ["C0", "C1", "C2", "C3", "C4", "C5"] },
+    "repetition": { "type": "integer", "minimum": 1 },
+    "started_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "finished_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "provider": { "type": "string", "minLength": 1 },
+        "model": { "type": "string", "minLength": 1 },
+        "harness_version": { "type": "string", "minLength": 1 },
+        "dataset_manifest_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+        "prompt_bundle_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+        "policy_manifest_sha256": { "$ref": "common.schema.json#/$defs/sha256" },
+        "seed": { "type": ["integer", "null"] },
+        "temperature": { "type": ["number", "null"], "minimum": 0 }
+      },
+      "required": ["provider", "model", "harness_version", "dataset_manifest_sha256", "prompt_bundle_sha256", "policy_manifest_sha256", "seed", "temperature"],
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "enum": ["completed", "provider_error", "harness_error", "timeout", "cancelled"] },
+        "error_code": { "type": ["string", "null"] },
+        "latency_ms": { "type": "integer", "minimum": 0 },
+        "input_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "output_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "cost_usd": { "type": ["number", "null"], "minimum": 0 }
+      },
+      "required": ["status", "error_code", "latency_ms", "input_tokens", "output_tokens", "cost_usd"],
+      "additionalProperties": false
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/event" }
+    },
+    "auditor_view": {
+      "type": "object",
+      "description": "Projection supplied to S4. It must not contain deterministic outcomes, human labels, or auditor predictions.",
+      "properties": {
+        "included_event_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "minItems": 1, "uniqueItems": true },
+        "omitted_fields": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "view_sha256": { "$ref": "common.schema.json#/$defs/sha256" }
+      },
+      "required": ["included_event_ids", "omitted_fields", "view_sha256"],
+      "additionalProperties": false
+    },
+    "deterministic_outcome": {
+      "type": "object",
+      "properties": {
+        "case_kind": { "type": "string", "enum": ["benign", "adversarial"] },
+        "case_valid": { "type": "boolean" },
+        "benign_success": { "type": ["boolean", "null"] },
+        "attack_success": { "type": ["boolean", "null"] },
+        "policy_violations": { "type": "array", "items": { "$ref": "#/$defs/policyViolation" } },
+        "canary_hits": { "type": "array", "items": { "$ref": "#/$defs/canaryHit" } },
+        "oracle_results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "oracle_id": { "$ref": "common.schema.json#/$defs/identifier" },
+              "passed": { "type": "boolean" },
+              "observed": {},
+              "evidence_event_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "uniqueItems": true }
+            },
+            "required": ["oracle_id", "passed", "observed", "evidence_event_ids"],
+            "additionalProperties": false
+          }
+        },
+        "eligible_for_security_scoring": { "type": "boolean" },
+        "exclusion_reason": { "type": ["string", "null"] }
+      },
+      "required": ["case_kind", "case_valid", "benign_success", "attack_success", "policy_violations", "canary_hits", "oracle_results", "eligible_for_security_scoring", "exclusion_reason"],
+      "additionalProperties": false
+    },
+    "human_annotations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/humanAnnotation" }
+    },
+    "adjudication": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/adjudication" }]
+    },
+    "auditor_predictions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/auditorPrediction" }
+    },
+    "privacy": {
+      "type": "object",
+      "properties": {
+        "pii_status": { "type": "string", "enum": ["not_applicable", "sanitized", "restricted"] },
+        "full_prompts_stored": { "const": false },
+        "full_cv_stored": { "const": false },
+        "redactions_applied": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      },
+      "required": ["pii_status", "full_prompts_stored", "full_cv_stored", "redactions_applied"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["schema_version", "trace_id", "run_id", "case_id", "condition", "repetition", "started_at", "finished_at", "configuration", "execution", "events", "auditor_view", "deterministic_outcome", "human_annotations", "adjudication", "auditor_predictions", "privacy"],
+  "additionalProperties": false,
+  "$defs": {
+    "event": {
+      "type": "object",
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1 },
+        "event_id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "timestamp": { "$ref": "common.schema.json#/$defs/timestamp" },
+        "event_type": {
+          "type": "string",
+          "enum": ["request_received", "retrieval_query", "retrieval_result", "rerank_result", "llm_input", "llm_output", "tool_proposed", "policy_decision", "tool_result", "state_transition", "session_read", "session_write", "final_output", "error"]
+        },
+        "scope": { "$ref": "common.schema.json#/$defs/scope" },
+        "payload": { "type": "object" },
+        "evidence_refs": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/evidenceRef" } },
+        "content_sha256": { "$ref": "common.schema.json#/$defs/sha256" }
+      },
+      "required": ["sequence", "event_id", "timestamp", "event_type", "payload", "evidence_refs", "content_sha256"],
+      "additionalProperties": false
+    },
+    "policyViolation": {
+      "type": "object",
+      "properties": {
+        "code": { "$ref": "common.schema.json#/$defs/identifier" },
+        "stage": { "type": "string", "minLength": 1 },
+        "evidence_event_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "minItems": 1, "uniqueItems": true }
+      },
+      "required": ["code", "stage", "evidence_event_ids"],
+      "additionalProperties": false
+    },
+    "canaryHit": {
+      "type": "object",
+      "properties": {
+        "canary_id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "stage": { "type": "string", "enum": ["retrieval", "context", "tool_argument", "tool_result", "output", "trace"] },
+        "authorized": { "type": "boolean" },
+        "evidence_event_id": { "$ref": "common.schema.json#/$defs/identifier" }
+      },
+      "required": ["canary_id", "stage", "authorized", "evidence_event_id"],
+      "additionalProperties": false
+    },
+    "humanAnnotation": {
+      "type": "object",
+      "properties": {
+        "annotation_id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "annotator_id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "rubric_version": { "type": "string", "minLength": 1 },
+        "round": { "type": "integer", "minimum": 1 },
+        "label": { "$ref": "common.schema.json#/$defs/decision" },
+        "risk_codes": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "uniqueItems": true },
+        "evidence_event_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "uniqueItems": true },
+        "confidence": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "rationale": { "type": "string", "minLength": 1 },
+        "created_at": { "$ref": "common.schema.json#/$defs/timestamp" }
+      },
+      "required": ["annotation_id", "annotator_id", "rubric_version", "round", "label", "risk_codes", "evidence_event_ids", "confidence", "rationale", "created_at"],
+      "additionalProperties": false
+    },
+    "adjudication": {
+      "type": "object",
+      "properties": {
+        "label": { "$ref": "common.schema.json#/$defs/decision" },
+        "adjudicator_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "minItems": 1, "uniqueItems": true },
+        "risk_codes": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "uniqueItems": true },
+        "rationale": { "type": "string", "minLength": 1 },
+        "created_at": { "$ref": "common.schema.json#/$defs/timestamp" }
+      },
+      "required": ["label", "adjudicator_ids", "risk_codes", "rationale", "created_at"],
+      "additionalProperties": false
+    },
+    "auditorPrediction": {
+      "type": "object",
+      "properties": {
+        "prediction_id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "auditor_id": { "$ref": "common.schema.json#/$defs/identifier" },
+        "model": { "type": "string", "minLength": 1 },
+        "replicate": { "type": "integer", "minimum": 1 },
+        "label": { "$ref": "common.schema.json#/$defs/decision" },
+        "risk_codes": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "uniqueItems": true },
+        "evidence_event_ids": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/identifier" }, "uniqueItems": true },
+        "rationale": { "type": "string", "minLength": 1 },
+        "latency_ms": { "type": "integer", "minimum": 0 },
+        "cost_usd": { "type": ["number", "null"], "minimum": 0 }
+      },
+      "required": ["prediction_id", "auditor_id", "model", "replicate", "label", "risk_codes", "evidence_event_ids", "rationale", "latency_ms", "cost_usd"],
+      "additionalProperties": false
+    }
+  }
+}
