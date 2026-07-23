@@ -1,0 +1,47 @@
+schema_version: 1.0.0
+experiment_id: recruitsecbench-development-v1
+benchmark_namespace: recruitsecbench_simulator
+partition: development
+conditions: [C0, C1, C2, C3]
+models:
+  - model_key: mock-v1
+    config_id: deterministic-default-v1
+    provider: mock
+    model_id: recruitsecbench-deterministic-mock
+    settings:
+      temperature: 0
+    endpoint_class: deterministic_mock
+repetitions: 3
+seeds: [20260722, 20260723, 20260724]
+evidence_ids:
+  - evidence-rq1-primary
+  - evidence-rq2-factorial
+  - evidence-rq3-auditor
+artifact_manifests:
+  domain: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  benign: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  adversarial: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+  deterministic: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+  audit: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+repository_commits:
+  recruitsecbench: fe9cdd75cd66c4cbfddd4cb4c14b524ff4f30c34
+  rh_agent_agno: 8588d0aa835f3e2a590f1b1ae5ac855e733ae269
+  smart_rh_platform: bb20a77df80f9eb9db51203737c9ba6053e651ff
+  agentrh_infra: 38224ada162f5853563075cd93bb80918dc848d1
+failure_policy:
+  retryable_statuses:
+    - provider_error
+    - transport_error
+    - harness_error
+    - timeout
+    - cancelled
+  max_attempts: 3
+  preserve_all_attempts: true
+budget:
+  currency: USD
+  max_cost: 25
+  block_before_exceeding: true
+authorization:
+  evaluation_requires_explicit_confirmation: true
+  holdout_requires_explicit_confirmation: true
+  holdout_single_campaign: true
