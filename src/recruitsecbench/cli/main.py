@@ -1,3 +1,7 @@
+"""Safe command shell shared by all RecruitSecBench commands."""
+
+from __future__ import annotations
+
 import json
 import shutil
 from dataclasses import dataclass
@@ -9,6 +13,9 @@ import typer
 from recruitsecbench import __version__
 from recruitsecbench.cli.failures import RecruitSecBenchFailure
 from recruitsecbench.config import Settings, load_settings
+from recruitsecbench.config.manifests import atomic_write_bytes
+from recruitsecbench.validation.schema import REPOSITORY_ROOT
+from recruitsecbench.validation.service import ValidationReport, ValidationService
 
 app = typer.Typer(
     add_completion=False,
@@ -73,32 +80,71 @@ def configure(
         _failure_handler(context, error, json_output=json_output)
 
 
+def _validation_report(settings: Settings) -> ValidationReport:
+    return ValidationService(
+        repository_root=REPOSITORY_ROOT,
+        artifact_root=settings.artifact_root,
+    ).run()
+
+
 @app.command()
 def doctor(
     context: typer.Context,
     probe_models: Annotated[
         bool, typer.Option("--probe-models", help="Reserved explicit model probe")
     ] = False,
+    json_output: Annotated[
+        bool, typer.Option("--json", help="Write structured output to stdout")
+    ] = False,
 ) -> None:
-    """Inspect local prerequisites without making a model or provider call."""
+    """Inspect prerequisites and safety gates without making a provider call."""
 
     command_context: CommandContext = context.obj
+    validation = _validation_report(command_context.settings)
     checks = {
         "python": True,
         "git": shutil.which("git") is not None,
         "docker": shutil.which("docker") is not None,
         "artifact_root_writable": _artifact_root_writable(command_context.settings.artifact_root),
         "model_probe_requested": probe_models,
+        "validation_gates": validation.ok,
     }
-    _emit(
-        {
-            "status": "ok",
-            "summary": "doctor completed without provider calls",
-            "version": __version__,
-            "checks": checks,
-        },
-        json_output=command_context.json_output,
-    )
+    payload: dict[str, Any] = {
+        "status": "ok" if validation.ok else "error",
+        "summary": (
+            "doctor completed without provider calls"
+            if validation.ok
+            else "doctor found one or more blocking validation failures"
+        ),
+        "version": __version__,
+        "checks": checks,
+        "validation": validation.as_dict(),
+    }
+    _emit(payload, json_output=command_context.json_output or json_output)
+    if not validation.ok:
+        raise typer.Exit(3)
+
+
+@app.command("validate")
+def validate_command(
+    context: typer.Context,
+    report: Annotated[
+        Path | None,
+        typer.Option("--report", help="Write the canonical JSON validation report"),
+    ] = None,
+    json_output: Annotated[
+        bool, typer.Option("--json", help="Write structured output to stdout")
+    ] = False,
+) -> None:
+    """Run all offline schema, manifest, privacy, provenance, and compatibility gates."""
+
+    command_context: CommandContext = context.obj
+    validation = _validation_report(command_context.settings)
+    if report is not None:
+        atomic_write_bytes(report, validation.canonical_bytes())
+    _emit(validation.as_dict(), json_output=command_context.json_output or json_output)
+    if not validation.ok:
+        raise typer.Exit(3)
 
 
 def _artifact_root_writable(path: Path) -> bool:
