@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "trace-event.schema.json",
+  "title": "RecruitSecBench sanitized trace event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "trace_id",
+    "run_id",
+    "attempt_id",
+    "sequence",
+    "timestamp",
+    "event_type",
+    "stage",
+    "sanitization",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "event_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "trace_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "attempt_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "parent_event_id": {
+      "type": ["string", "null"],
+      "maxLength": 128
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "run_started",
+        "retrieval",
+        "context_materialized",
+        "model_request",
+        "model_response",
+        "tool_requested",
+        "policy_decision",
+        "tool_completed",
+        "state_transition",
+        "side_effect",
+        "canary_observation",
+        "oracle_result",
+        "auditor_view_created",
+        "auditor_prediction",
+        "operational_failure",
+        "run_completed"
+      ]
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "retrieval",
+        "context",
+        "model",
+        "tool_argument",
+        "tool_result",
+        "state",
+        "output",
+        "trace",
+        "auditor"
+      ]
+    },
+    "actor_id": {
+      "type": ["string", "null"],
+      "maxLength": 128
+    },
+    "scope_hash": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/sha256" }
+      ]
+    },
+    "sanitization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "pii_detected",
+        "full_prompt_stored",
+        "full_cv_stored",
+        "gold_label_included"
+      ],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "enum": ["audit_minimal_v1", "auditor_view_v1"]
+        },
+        "pii_detected": {
+          "const": false
+        },
+        "full_prompt_stored": {
+          "const": false
+        },
+        "full_cv_stored": {
+          "const": false
+        },
+        "gold_label_included": {
+          "const": false
+        },
+        "redaction_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool_name": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "decision": {
+          "type": "string",
+          "enum": ["ALLOW", "DENY", "HUMAN_REVIEW", "ERROR"]
+        },
+        "reason_code": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "provider_error",
+            "transport_error",
+            "harness_error",
+            "timeout",
+            "cancelled",
+            "budget_blocked",
+            "invalid_case",
+            "inconclusive"
+          ]
+        },
+        "content_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "content_length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "data_classes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "public",
+              "internal",
+              "restricted",
+              "identity_scoped",
+              "trusted",
+              "untrusted"
+            ]
+          }
+        },
+        "resource_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "arguments_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "result_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "side_effect_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "canary_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "sanitized_excerpt": {
+          "type": "string",
+          "maxLength": 240
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

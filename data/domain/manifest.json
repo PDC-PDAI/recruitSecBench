@@ -1,0 +1,26 @@
+{
+  "artifact_version": "0.2.0",
+  "count": 1440,
+  "dataset": "domain",
+  "languages": [
+    "pt-BR",
+    "en"
+  ],
+  "partition_counts": {
+    "development": 360,
+    "evaluation": 360,
+    "holdout": 360,
+    "pilot": 360
+  },
+  "partitions": [
+    "development",
+    "pilot",
+    "evaluation",
+    "holdout"
+  ],
+  "privacy_status": "synthetic_public_safe",
+  "schema_version": "1.0.0",
+  "seed": 2026,
+  "sha256": "372c219aecdc8ed1af899d4cf2195045ae7b3cc61782e247e9a72ced6706e499",
+  "source_kind": "synthetic"
+}

@@ -24,3 +24,8 @@ manifests/local/
 Thumbs.db
 .vscode/
 .idea/
+
+pdfs/
+data/derived-restricted/
+
+data/redacted-restricted/

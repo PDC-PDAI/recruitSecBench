@@ -1,0 +1,26 @@
+{
+  "artifact_version": "0.2.0",
+  "count": 192,
+  "dataset": "adversarial",
+  "languages": [
+    "pt-BR",
+    "en"
+  ],
+  "partition_counts": {
+    "development": 48,
+    "evaluation": 72,
+    "holdout": 48,
+    "pilot": 24
+  },
+  "partitions": [
+    "development",
+    "pilot",
+    "evaluation",
+    "holdout"
+  ],
+  "privacy_status": "synthetic_public_safe",
+  "schema_version": "1.0.0",
+  "seed": 2026,
+  "sha256": "a4bf57aef218b7e9a7dbc00c4a913ff960577fd825eda1962f0edab2ea52d07d",
+  "source_kind": "synthetic"
+}
