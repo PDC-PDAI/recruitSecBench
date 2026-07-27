@@ -596,6 +596,7 @@ dev = [
     { name = "ruff" },
     { name = "types-jsonschema" },
     { name = "types-pyyaml" },
+    { name = "types-reportlab" },
 ]
 
 [package.metadata]
@@ -617,6 +618,7 @@ dev = [
     { name = "ruff", specifier = ">=0.5,<1" },
     { name = "types-jsonschema", specifier = ">=4.23,<5" },
     { name = "types-pyyaml", specifier = ">=6,<7" },
+    { name = "types-reportlab", specifier = ">=4,<5" },
 ]
 
 [[package]]
@@ -832,6 +834,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b8/83/4a1afc3fbfcf5b8d46fc390cd95ed6b0dc9010a265f4e9f46314efffa37a/types_pyyaml-6.0.12.20260518.tar.gz", hash = "sha256:d917f83fb38462550338c1297faedd860b3ec83912b96b1e3d73255f7473e466", size = 17850, upload-time = "2026-05-18T06:01:58.675Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/06/a2/c01db32be2ae7d6a1689972f3c492b149ee4e164b12fdfd9f64b50888215/types_pyyaml-6.0.12.20260518-py3-none-any.whl", hash = "sha256:d2150f75a231c9fe9c7463bd29487d93e60bac90400287351384bc2284eba7cd", size = 20312, upload-time = "2026-05-18T06:01:57.368Z" },
+]
+
+[[package]]
+name = "types-reportlab"
+version = "4.5.1.20260724"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e7/7e/fd2ea75db98ce094ebcf5f6763346e77eedc9db4855eb8e999d53e51aaa6/types_reportlab-4.5.1.20260724.tar.gz", hash = "sha256:71d3c85fa2055e34803c3a21410db39d4f039b3a6e0db39f9c3a43b202d5997c", size = 72495, upload-time = "2026-07-24T04:58:02.807Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/34/47/0f73d182edf92630aa933c9b14a4d6b0c7a00d1fc5b8d478aeb4b6157c0b/types_reportlab-4.5.1.20260724-py3-none-any.whl", hash = "sha256:182b52f41e346587c97e0d8cd677c5c64a821342497cb1ab4478e2bb19d7d8e4", size = 113004, upload-time = "2026-07-24T04:58:01.49Z" },
 ]
 
 [[package]]

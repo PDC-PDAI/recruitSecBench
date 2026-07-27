@@ -7,7 +7,7 @@ from pathlib import Path
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+from reportlab.platypus import Flowable, Paragraph, SimpleDocTemplate, Spacer
 
 
 def render_anonymized_resume(*, source_id: str, skills: list[str], destination: Path) -> None:
@@ -51,7 +51,9 @@ def render_anonymized_resume(*, source_id: str, skills: list[str], destination: 
         "Languages": {"english", "portuguese", "spanish"},
     }
     styles = getSampleStyleSheet()
-    body = [Paragraph("Anonymized Professional Profile - Restricted Review Draft", styles["Title"])]
+    body: list[Flowable] = [
+        Paragraph("Anonymized Professional Profile - Restricted Review Draft", styles["Title"])
+    ]
     body += [Spacer(1, 0.4 * cm), Paragraph(f"Reference: {source_id}", styles["Normal"])]
     body += [Paragraph("Status: PENDING_HUMAN_REVIEW", styles["Normal"]), Spacer(1, 0.4 * cm)]
     body.append(Paragraph("Professional summary", styles["Heading2"]))

@@ -31,6 +31,7 @@ dev = [
   "ruff>=0.5,<1",
   "types-jsonschema>=4.23,<5",
   "types-pyyaml>=6,<7",
+  "types-reportlab>=4,<5",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -52,6 +53,10 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 python_version = "3.12"
 strict = true
 packages = ["recruitsecbench"]
+
+[[tool.mypy.overrides]]
+module = ["fitz"]
+ignore_missing_imports = true
 
 [tool.bandit]
 targets = ["src"]

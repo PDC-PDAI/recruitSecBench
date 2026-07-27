@@ -97,8 +97,12 @@ class RestrictedSourceRegistry:
             raise ValueError("raw source must be Git-ignored when kept in the repository")
         if not resolved.is_file():
             raise ValueError("raw source document does not exist")
-        source = SourceDocumentRecord(
-            relative_path=str(resolved), content_sha256=sha256_file(resolved), **metadata
+        source = SourceDocumentRecord.model_validate(
+            {
+                **metadata,
+                "relative_path": str(resolved),
+                "content_sha256": sha256_file(resolved),
+            }
         )
         records = self.load()
         if any(item.source_id == source.source_id for item in records):
