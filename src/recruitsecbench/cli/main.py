@@ -13,6 +13,7 @@ import typer
 from recruitsecbench import __version__
 from recruitsecbench.cli.datasets import datasets_app
 from recruitsecbench.cli.failures import RecruitSecBenchFailure
+from recruitsecbench.cli.freeze import freeze_command
 from recruitsecbench.cli.privacy import privacy_app
 from recruitsecbench.config import Settings, load_settings
 from recruitsecbench.config.manifests import atomic_write_bytes
@@ -26,6 +27,7 @@ app = typer.Typer(
 )
 app.add_typer(privacy_app, name="privacy")
 app.add_typer(datasets_app, name="datasets")
+app.command("freeze")(freeze_command)
 
 
 @dataclass(frozen=True)

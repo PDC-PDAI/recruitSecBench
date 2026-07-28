@@ -1,0 +1,26 @@
+schema_version: 1.0.0
+partitions:
+  development:
+    coverage:
+      domain_records: 360
+      benign_cases: 16
+      adversarial_cases: 48
+      deterministic_fixtures: 33
+  pilot:
+    coverage:
+      domain_records: 360
+      benign_cases: 8
+      adversarial_cases: 24
+      deterministic_fixtures: 17
+  evaluation:
+    coverage:
+      domain_records: 360
+      benign_cases: 24
+      adversarial_cases: 72
+      deterministic_fixtures: 49
+  holdout:
+    coverage:
+      domain_records: 360
+      benign_cases: 16
+      adversarial_cases: 48
+      deterministic_fixtures: 33

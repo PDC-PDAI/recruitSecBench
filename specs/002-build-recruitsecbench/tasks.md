@@ -64,8 +64,8 @@
 
 **Independent Test**: Reproduce an unchanged freeze byte-for-byte; mutate an input and verify a new version is required and incompatible results cannot aggregate.
 
-- [ ] T016 [US3] Implement lineage-aware development/pilot/evaluation/holdout partitioning, connected-component isolation, and coverage targets in `src/recruitsecbench/datasets/partitions.py`, `protocol/partitions.yaml`, and `tests/property/test_partition_isolation.py`
-- [ ] T017 [US3] Implement freeze creation, immutable dataset/config/prompt/policy/model/oracle manifests, aggregation compatibility gates, and holdout single-campaign enforcement in `src/recruitsecbench/config/freeze.py`, `src/recruitsecbench/runner/authorization.py`, and `tests/integration/test_freeze_reproducibility.py`
+- [X] T016 [US3] Implement lineage-aware development/pilot/evaluation/holdout partitioning, connected-component isolation, and coverage targets in `src/recruitsecbench/datasets/partitions.py`, `protocol/partitions.yaml`, and `tests/property/test_partition_isolation.py`
+- [X] T017 [US3] Implement freeze creation, immutable dataset/config/prompt/policy/model/oracle manifests, aggregation compatibility gates, and holdout single-campaign enforcement in `src/recruitsecbench/config/freeze.py`, `src/recruitsecbench/runner/authorization.py`, and `tests/integration/test_freeze_reproducibility.py`
 
 **Checkpoint**: Evaluation and holdout artifacts are sealed and runs cannot combine incompatible evidence.
 
