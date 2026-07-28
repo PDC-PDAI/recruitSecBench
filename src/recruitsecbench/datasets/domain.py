@@ -9,6 +9,12 @@ import json
 from pathlib import Path
 from typing import Any
 
+from recruitsecbench.datasets.questionnaire_reference import (
+    DEFAULT_REFERENCE_PATH,
+    load_reference_corpus,
+    select_questionnaires,
+)
+
 PARTITIONS = ("development", "pilot", "evaluation", "holdout")
 PROJECT_COUNT = 4
 PROCESS_COUNT = 8
@@ -18,6 +24,29 @@ APPLICATION_COUNT = 96
 QUESTIONNAIRE_COUNT = 24
 QUESTIONS_PER_QUESTIONNAIRE = 10
 RESPONSES_PER_QUESTION = 2
+
+SKILL_LABELS = {
+    "analise_de_dados": ("analise de dados", "data analysis"),
+    "atendimento_ao_cliente": ("atendimento ao cliente", "customer service"),
+    "autonomia": ("autonomia", "autonomy"),
+    "compliance": ("conformidade", "compliance"),
+    "comunicacao": ("comunicacao", "communication"),
+    "financas": ("financas", "finance"),
+    "gestao_de_projetos": ("gestao de projetos", "project management"),
+    "idiomas": ("idiomas", "languages"),
+    "lideranca": ("lideranca", "leadership"),
+    "marketing": ("marketing", "marketing"),
+    "operacoes": ("operacoes", "operations"),
+    "organizacao": ("organizacao", "organization"),
+    "pesquisa": ("pesquisa", "research"),
+    "programacao": ("programacao", "programming"),
+    "qualidade": ("qualidade", "quality"),
+    "recursos_humanos": ("recursos humanos", "human resources"),
+    "resolucao_de_problemas": ("resolucao de problemas", "problem solving"),
+    "seguranca": ("seguranca", "security"),
+    "tomada_de_decisao": ("tomada de decisao", "decision making"),
+    "vendas": ("vendas", "sales"),
+}
 
 
 def _translations(pt_br: str, en: str) -> dict[str, str]:
@@ -50,13 +79,34 @@ def _record(
     }
 
 
-def generate_domain(seed: int = 2026) -> list[dict[str, Any]]:
+def _question_text(skill_tag: str, response_type: str) -> tuple[str, str]:
+    """Create safe synthetic wording from a reference taxonomy, never source text."""
+
+    pt_br, en = SKILL_LABELS.get(skill_tag, (skill_tag.replace("_", " "), skill_tag))
+    if response_type == "LONG_TEXT":
+        return (
+            f"Descreva como voce aplicaria {pt_br} em um cenario de trabalho relevante.",
+            f"Describe how you would apply {en} in a relevant work scenario.",
+        )
+    return (
+        f"Qual pratica voce utiliza para demonstrar {pt_br} no trabalho?",
+        f"Which practice do you use to demonstrate {en} at work?",
+    )
+
+
+def generate_domain(
+    seed: int = 2026, *, questionnaire_reference: Path = DEFAULT_REFERENCE_PATH
+) -> list[dict[str, Any]]:
     """Generate the complete, deterministic public synthetic corpus.
 
     The connected lineage for each project stays in one partition. Every human-readable
     entity carries Portuguese and English text; no real CV or personal data is emitted.
     """
 
+    corpus = load_reference_corpus(questionnaire_reference)
+    questionnaire_blueprints = select_questionnaires(
+        corpus, count=QUESTIONNAIRE_COUNT, seed=seed
+    )
     rows: list[dict[str, Any]] = []
     applications_by_vacancy: dict[str, list[tuple[str, str]]] = {}
 
@@ -345,6 +395,7 @@ def generate_domain(seed: int = 2026) -> list[dict[str, Any]]:
                 )
             )
 
+    blueprint_index = 0
     for vacancy_number in range(1, VACANCY_COUNT + 1):
         project_number = (vacancy_number - 1) // 4 + 1
         project_id = f"project-{project_number:03d}"
@@ -355,6 +406,8 @@ def generate_domain(seed: int = 2026) -> list[dict[str, Any]]:
         for version in versions:
             questionnaire_id = f"questionnaire-{vacancy_number:03d}"
             questionnaire_record_id = f"{questionnaire_id}-v{version}"
+            blueprint = questionnaire_blueprints[blueprint_index]
+            blueprint_index += 1
             criterion_ids = [f"criterion-{vacancy_number:03d}-{index}" for index in range(1, 4)]
             question_ids = [
                 f"question-{vacancy_number:03d}-v{version}-{index:02d}"
@@ -376,6 +429,11 @@ def generate_domain(seed: int = 2026) -> list[dict[str, Any]]:
                         "generation_status": "READY",
                         "criterion_ids": criterion_ids,
                         "question_ids": question_ids,
+                        "reference_corpus_sha256": corpus.sha256,
+                        "reference_question_fingerprints": [
+                            reference_question.rewritten_text_sha256
+                            for reference_question in blueprint.questions
+                        ],
                         "translations": _translations(
                             f"Questionario tecnico da vaga {vacancy_number}, versao {version}.",
                             f"Technical questionnaire for vacancy {vacancy_number}, version {version}.",
@@ -387,8 +445,13 @@ def generate_domain(seed: int = 2026) -> list[dict[str, Any]]:
                 )
             )
             response_applications = applications_by_vacancy[vacancy_id][:RESPONSES_PER_QUESTION]
-            for question_index, question_id in enumerate(question_ids, start=1):
+            for question_index, (question_id, reference_question) in enumerate(
+                zip(question_ids, blueprint.questions, strict=True), start=1
+            ):
                 criterion_id = criterion_ids[(question_index - 1) % len(criterion_ids)]
+                pt_br, en = _question_text(
+                    reference_question.skill_tag, reference_question.response_type
+                )
                 rows.append(
                     _record(
                         question_id,
@@ -399,17 +462,22 @@ def generate_domain(seed: int = 2026) -> list[dict[str, Any]]:
                             "questionnaire_record_id": questionnaire_record_id,
                             "questionnaire_version": version,
                             "criterion_id": criterion_id,
-                            "text": f"Explain how you would apply criterion {criterion_id} in a project.",
-                            "relevance_rationale": f"Measures competency {criterion_id}.",
+                            "text": en,
+                            "relevance_rationale": (
+                                "Synthetic wording generated from the local rewritten-questionnaire "
+                                "taxonomy."
+                            ),
                             "privacy_restrictions": ["no_personal_data"],
-                            "response_type": "LONG_TEXT",
+                            "response_type": reference_question.response_type,
+                            "reference_skill_tag": reference_question.skill_tag,
+                            "reference_text_sha256": reference_question.rewritten_text_sha256,
                             "required": True,
                             "order": question_index,
                             "weight": 0.1,
                             "review_status": "APPROVED",
                             "translations": _translations(
-                                f"Explique como voce aplicaria o criterio {criterion_id} em um projeto.",
-                                f"Explain how you would apply criterion {criterion_id} in a project.",
+                                pt_br,
+                                en,
                             ),
                         },
                         partition=partition,

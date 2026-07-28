@@ -1,5 +1,5 @@
 {
-  "artifact_version": "0.2.0",
+  "artifact_version": "0.3.0",
   "count": 256,
   "dataset": "audit",
   "languages": [

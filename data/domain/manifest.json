@@ -1,5 +1,5 @@
 {
-  "artifact_version": "0.2.0",
+  "artifact_version": "0.3.0",
   "count": 1440,
   "dataset": "domain",
   "languages": [
@@ -21,6 +21,6 @@
   "privacy_status": "synthetic_public_safe",
   "schema_version": "1.0.0",
   "seed": 2026,
-  "sha256": "372c219aecdc8ed1af899d4cf2195045ae7b3cc61782e247e9a72ced6706e499",
+  "sha256": "830943cf2e775aa078aa89b6acc59c3574bfafe6ec950fdeedc8d0577c3157a8",
   "source_kind": "synthetic"
 }

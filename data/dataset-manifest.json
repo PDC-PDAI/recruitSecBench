@@ -1,5 +1,5 @@
 {
-  "artifact_version": "0.2.0",
+  "artifact_version": "0.3.0",
   "counts": {
     "adversarial": 192,
     "audit": 256,
@@ -12,7 +12,7 @@
     "audit/traces.jsonl": "6017131bfa59d88b1b7d1ff7420cb025c14a19c5e6dd5438a944797befe15e85",
     "benign/cases.jsonl": "6a739cd2d38be976a939f7a773b74351ecece897a8cfeb429afa6639b69f8468",
     "deterministic/fixtures.jsonl": "0df59145bc672deb154eb3a792617fe9faf69c709de59983670025ab5620b2cf",
-    "domain/records.jsonl": "372c219aecdc8ed1af899d4cf2195045ae7b3cc61782e247e9a72ced6706e499"
+    "domain/records.jsonl": "830943cf2e775aa078aa89b6acc59c3574bfafe6ec950fdeedc8d0577c3157a8"
   },
   "languages": [
     "pt-BR",
