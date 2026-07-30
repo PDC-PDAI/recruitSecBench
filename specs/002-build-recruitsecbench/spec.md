@@ -37,6 +37,10 @@ auditor em modo sombra e sincronização contínua com o artigo."
 
 - Q: Qual nível de detalhe dos resultados da bateria deve ir ao artigo? → A: Publicar métricas agregadas e evidências sanitizadas por família de caso, ataque, condição e modelo; PDFs, texto extraído, prompts completos e traces detalhados permanecem sob acesso controlado.
 
+### Session 2026-07-30
+
+- Q: Em quais condições o AgentDojo deve ser executado na plataforma? → A: AgentDojo padrão roda somente em C0 na plataforma; a matriz C0/CaMeL/FIDES/CaMeL+FIDES roda nos datasets RecruitSecBench.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Governar e derivar perfis com segurança (Priority: P1)
@@ -114,8 +118,9 @@ alterar um artefato deve exigir nova versão e impedir mistura de resultados.
 
 ### User Story 4 - Validar a pipeline no AgentDojo padrão (Priority: P4)
 
-Como pesquisador, quero executar primeiro o AgentDojo padrão sem modificar seus cenários,
-para validar o harness antes de atribuir qualquer resultado ao RecruitSecBench.
+Como pesquisador, quero executar primeiro o AgentDojo padrão na condição C0, sem modificar
+seus cenários, para validar o harness da plataforma antes de atribuir qualquer resultado ao
+RecruitSecBench.
 
 **Why this priority**: Falhas operacionais não podem virar falsos resultados científicos.
 
@@ -126,8 +131,9 @@ e isolado; a execução completa deve depender de solicitação explícita.
 
 1. **Given** uma instalação suportada, **When** o smoke test roda, **Then** tarefas,
    ataques, defesas, persistência e relatório são verificados dentro do limite de custo.
-2. **Given** um resultado do AgentDojo padrão, **When** agregados do RecruitSecBench são
-   produzidos, **Then** esse resultado não é misturado nem tratado como evidência própria.
+2. **Given** um resultado do AgentDojo padrão em C0, **When** agregados do RecruitSecBench
+   são produzidos, **Then** esse resultado não é misturado nem tratado como evidência própria,
+   e CaMeL/FIDES não são aplicados à suíte AgentDojo.
 3. **Given** timeout, cancelamento ou erro, **When** o run termina, **Then** sua categoria
    operacional é preservada e não se torna SAFE, BLOCK ou sucesso de ataque.
 
@@ -351,8 +357,8 @@ manifest e método, e regenerar tabelas e gráficos sem editar valores manualmen
 
 #### AgentDojo e ambiente RecruitSecBench
 
-- **FR-039**: A pipeline MUST executar primeiro o AgentDojo padrão sem modificar cenários
-  e manter seus resultados separados.
+- **FR-039**: A pipeline MUST executar primeiro o AgentDojo padrão na plataforma, somente
+  na condição `C0` e sem modificar cenários, e manter seus resultados separados.
 - **FR-040**: MUST existir smoke test padrão de baixo custo; execução completa exige ação
   explícita.
 - **FR-041**: Runs padrão MUST registrar versão, suites, tarefas, ataques, defesas,
@@ -367,7 +373,8 @@ manifest e método, e regenerar tabelas e gráficos sem editar valores manualmen
 #### Baseline, intervenções e medição
 
 - **FR-044a**: Uma fase posterior MUST transformar o domain canônico em fixtures no formato nativo da plataforma, por adaptador versionado e testado contra seus contratos. O adaptador MUST preservar IDs, escopos, versões, linhagem e resultados esperados, sem substituir silenciosamente o artefato canônico.
-- **FR-045**: O baseline MUST preceder intervenções e usar artefatos e partições congelados.
+- **FR-045**: O baseline dos datasets RecruitSecBench MUST preceder intervenções e usar
+  artefatos e partições congelados; o AgentDojo em `C0` valida apenas o harness da plataforma.
 - **FR-046**: Cada condição MUST preservar repetições e separar utilidade, ataque, policy,
   escopo, vazamento, canários, efeitos, estados, custo e latência.
 - **FR-047**: Agregação MUST ocorrer por `case_id`, quantificar incerteza e não tratar
@@ -379,9 +386,10 @@ manifest e método, e regenerar tabelas e gráficos sem editar valores manualmen
 - **FR-050**: Microsoft FIDES MUST ser testado como controle de fluxo de informação para
   agentes, incluindo rótulos de confidencialidade e integridade, propagação de rótulos,
   enforcement determinístico de policies e restrições de fluxo, sem presumir benefício.
-- **FR-051**: A matriz principal MUST usar o desenho fatorial `2×2`: `C0` baseline sem
-  CaMeL/FIDES, `C1` somente CaMeL, `C2` somente FIDES e `C3` CaMeL+FIDES. Cada condição
-  MUST registrar identidade, versão, configuração e diferenças.
+- **FR-051**: A matriz principal dos datasets RecruitSecBench MUST usar o desenho fatorial
+  `2×2`: `C0` baseline sem CaMeL/FIDES, `C1` somente CaMeL, `C2` somente FIDES e `C3`
+  CaMeL+FIDES. O AgentDojo é limitado a `C0`. Cada condição MUST registrar identidade,
+  versão, configuração e diferenças.
 - **FR-052**: Comparações MUST preservar casos, seeds, ataques, oráculos e métricas; o
   holdout MUST NOT orientar ajustes.
 - **FR-053**: Segurança, utilidade, custo, latência, estabilidade e revisão humana MUST
@@ -529,7 +537,9 @@ manifest e método, e regenerar tabelas e gráficos sem editar valores manualmen
 - A unidade de particionamento é a linhagem conectada; `evaluation` e `holdout` são selados.
 - Relevância ambígua pode exigir revisão humana, mas não anula falhas determinísticas.
 - O benchmark principal privado pode usar PDFs anonimizados aprovados no fluxo da plataforma em produção somente após autorização formal, janela controlada, isolamento lógico, monitoramento e rollback; chamadas ao provedor exigem autorização explícita por run e seus detalhes não são publicados.
-- O domain canônico será convertido posteriormente, por adaptador versionado, para fixtures no formato nativo da plataforma; essa conversão não substitui o corpus canônico.- AgentDojo padrão valida somente o harness e não produz resultados RecruitSecBench.
+- O domain canônico será convertido posteriormente, por adaptador versionado, para fixtures no formato nativo da plataforma; essa conversão não substitui o corpus canônico.
+- AgentDojo padrão roda somente em `C0` para validar o harness da plataforma e não produz
+  resultados RecruitSecBench nem recebe CaMeL ou FIDES.
 - CaMeL e Microsoft FIDES são intervenções experimentais fornecidas pelo protocolo;
   versão e configuração serão congeladas no planejamento e não implicam eficácia.
   CAMEL-AI multiagente e Ethyca Fides ficam fora de escopo na primeira versão.
