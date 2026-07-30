@@ -34,3 +34,12 @@ schemas/
 
 Os exemplos são inteiramente sintéticos. Canários são marcadores de teste, não
 segredos reais.
+
+## Currículos adversariais em PDF
+
+O comando `rscb privacy generate-adversarial-cvs` deriva quatro variantes de
+cada PDF previamente anonimizado em `data/redacted-restricted/`. As páginas,
+dimensões e aparência permanecem inalteradas; somente uma camada de texto
+invisível e extraível contendo o prompt injection é adicionada. Os derivados e
+seu manifesto ficam em `data/redacted-restricted/adversarial-pdfs/`, fora do
+Git e sujeitos ao mesmo controle restrito dos PDFs anonimizados.

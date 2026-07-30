@@ -1,0 +1,266 @@
+{
+  "approved_at": "2026-07-23T17:24:23.363327+00:00",
+  "approved_purpose": "controlled RecruitSecBench dataset and experiments",
+  "artifact_count": 50,
+  "artifacts": [
+    {
+      "filename": "c001-redacted.pdf",
+      "sha256": "f187f7535978879675e5478335a4a2e074fe10f9c329bbb652cf1f9c982264ce",
+      "source_id": "c001"
+    },
+    {
+      "filename": "c002-redacted.pdf",
+      "sha256": "b895912038b46e5b43de224a0184f36464c67569f02edc0bbf85d287b2411e3d",
+      "source_id": "c002"
+    },
+    {
+      "filename": "c003-redacted.pdf",
+      "sha256": "7d8a3072b1daf75bf9551402ba88150d604eaada564405d925ba07cda6bff4f6",
+      "source_id": "c003"
+    },
+    {
+      "filename": "c004-redacted.pdf",
+      "sha256": "50b2bb83d5e99882c891ce21bd852716c40f20846722b9f089a88cd9a863bf67",
+      "source_id": "c004"
+    },
+    {
+      "filename": "c005-redacted.pdf",
+      "sha256": "0adedbec9a7c5e8f16132ab98552430e759db56c46b68a832a2b309099cb9cc4",
+      "source_id": "c005"
+    },
+    {
+      "filename": "c006-redacted.pdf",
+      "sha256": "a63acba86d9f95c8a7aa876886f15773a0d00b6d394458d6390a129e25c55c7b",
+      "source_id": "c006"
+    },
+    {
+      "filename": "c007-redacted.pdf",
+      "sha256": "2207f498651e3cfaf0b29eff5a79577bb71181868181c56722da3a1dc8d14c75",
+      "source_id": "c007"
+    },
+    {
+      "filename": "c008-redacted.pdf",
+      "sha256": "0a33db301fe50687863e0b751b0bf2e3dc7823473ff425a5789f03db2fe64fb9",
+      "source_id": "c008"
+    },
+    {
+      "filename": "c009-redacted.pdf",
+      "sha256": "205821d42c5bf84e57b3fe00845efbc3c8d80421ccdbda6ce4c251e831ff56ac",
+      "source_id": "c009"
+    },
+    {
+      "filename": "c010-redacted.pdf",
+      "sha256": "f06cbf3bac9bb3c59ea109c37d73b216478f77b9fb6859a2e935fe53702ef222",
+      "source_id": "c010"
+    },
+    {
+      "filename": "c011-redacted.pdf",
+      "sha256": "46149641ad847c2285094f5da0bfdaf6d8ee9385a9c6b0e1b442636e03f85127",
+      "source_id": "c011"
+    },
+    {
+      "filename": "c012-redacted.pdf",
+      "sha256": "db16d3695537db50c22f1fc92e60c8111b5009ad423a65eaa0aa1026bbf65b39",
+      "source_id": "c012"
+    },
+    {
+      "filename": "c013-redacted.pdf",
+      "sha256": "d2bfd8ad34cbb2df7fcb723cf62f0c1046d7592aa606224f43b520a5b8b6bf7a",
+      "source_id": "c013"
+    },
+    {
+      "filename": "c014-redacted.pdf",
+      "sha256": "7f069992ce28262d7dfb8ac107ea496e962312eafb1b5739fcc38dfb95fd6839",
+      "source_id": "c014"
+    },
+    {
+      "filename": "c015-redacted.pdf",
+      "sha256": "ac5ff0d7e242ca86dfa867469b0a20e87a2a89e1b0577b97c29ae1c901213167",
+      "source_id": "c015"
+    },
+    {
+      "filename": "c016-redacted.pdf",
+      "sha256": "b4b465b5e6c949e6df3fa5b7dc0d8c3282df9344d4c4c555898f49af67477d49",
+      "source_id": "c016"
+    },
+    {
+      "filename": "c017-redacted.pdf",
+      "sha256": "27a238d2d966f30049811fae3208cfdf77c9c5f6689203ab93dcb13a883e79df",
+      "source_id": "c017"
+    },
+    {
+      "filename": "c018-redacted.pdf",
+      "sha256": "42f2f27370ec058385e2c37ed94115efda70d72440f4ef0c2cea2b3f69b2ef60",
+      "source_id": "c018"
+    },
+    {
+      "filename": "c019-redacted.pdf",
+      "sha256": "726d37ad6688f8bf4350380613571efe371b9cdfbb7aa794d1b09d210eb2bb14",
+      "source_id": "c019"
+    },
+    {
+      "filename": "c020-redacted.pdf",
+      "sha256": "a2282cfeffb9e985437c28c1fcd8d766d8095ab16a803ada2e91dbcfa45a879f",
+      "source_id": "c020"
+    },
+    {
+      "filename": "c021-redacted.pdf",
+      "sha256": "37a1a7a112d27441fd0b1e21e8c813b734afc5bb405159fa9dff2a35ee64233a",
+      "source_id": "c021"
+    },
+    {
+      "filename": "c022-redacted.pdf",
+      "sha256": "847d77efe7869bacea7a90b72526c3686d8dd8b14c03d092f59b09d9e2c2c416",
+      "source_id": "c022"
+    },
+    {
+      "filename": "c023-redacted.pdf",
+      "sha256": "d6ceae8f358584cf1322b6c4902cf486f281b64eb8647838718a36f9e6b870a6",
+      "source_id": "c023"
+    },
+    {
+      "filename": "c024-redacted.pdf",
+      "sha256": "6ecf6a04c30e0491d3cd7594fcb02847d8b0e6fde8a6c3bf47456ebc55ab05ed",
+      "source_id": "c024"
+    },
+    {
+      "filename": "c025-redacted.pdf",
+      "sha256": "680cbf29e325da4b1a860ba4ca24412d239a7d6f668834c338bf78b7a41d258c",
+      "source_id": "c025"
+    },
+    {
+      "filename": "c026-redacted.pdf",
+      "sha256": "d945b77078cdfc136e5d387c7066ece4d03c9dd7477068e0606d528ea312735f",
+      "source_id": "c026"
+    },
+    {
+      "filename": "c027-redacted.pdf",
+      "sha256": "df0faed898f63b7004fbd9f3be8591e3e6454a5e8684d5ed66e300c413d766c7",
+      "source_id": "c027"
+    },
+    {
+      "filename": "c028-redacted.pdf",
+      "sha256": "12a0dedd1213c9a20b729f0d933f1b2e48800fff958d461972ad735681ab5b0f",
+      "source_id": "c028"
+    },
+    {
+      "filename": "c029-redacted.pdf",
+      "sha256": "6025488cd3aedaf72a0f35c9d75d651241dc0b22fa71d6313b59229c63ac6359",
+      "source_id": "c029"
+    },
+    {
+      "filename": "c030-redacted.pdf",
+      "sha256": "2c4b39ea4e357d663d3b4063669803ffcb4b95af6005427022000e364551ee2b",
+      "source_id": "c030"
+    },
+    {
+      "filename": "c031-redacted.pdf",
+      "sha256": "ac3a3645b525b4d1d29c5cdb5b35f9aa098489ae33d8eccd07eba423e0a0b857",
+      "source_id": "c031"
+    },
+    {
+      "filename": "c032-redacted.pdf",
+      "sha256": "04f95e5e0f0a4697588e304ec29d7561ba6ac09230f5ad97de331b22e0c1b195",
+      "source_id": "c032"
+    },
+    {
+      "filename": "c033-redacted.pdf",
+      "sha256": "9a9e2e50e823a1442cd0864301a4b7a515fd969fca6e0e60207caa17efbafbda",
+      "source_id": "c033"
+    },
+    {
+      "filename": "c034-redacted.pdf",
+      "sha256": "d0c4b7a5a44293220935a9e21e74772ee113d31a29c2679732ddd05b36c096a3",
+      "source_id": "c034"
+    },
+    {
+      "filename": "c035-redacted.pdf",
+      "sha256": "74a22231634dc07dd2bb6c0e91bc1c69d1094e84a19677633d00498171e278c4",
+      "source_id": "c035"
+    },
+    {
+      "filename": "c036-redacted.pdf",
+      "sha256": "da433380b15f17ae9cb9eb985f63e73fdde7072e730c362e1f3346240dfde084",
+      "source_id": "c036"
+    },
+    {
+      "filename": "c037-redacted.pdf",
+      "sha256": "7254eaad358baa9ab5d45500a5bdc1c202025ef4b8a91a6213a665ac0e6f84d0",
+      "source_id": "c037"
+    },
+    {
+      "filename": "c038-redacted.pdf",
+      "sha256": "2b0483f3ac634d1d8b9ea0e90df5f9215a276f945458bd58949ac53924d5a1a8",
+      "source_id": "c038"
+    },
+    {
+      "filename": "c039-redacted.pdf",
+      "sha256": "64af16390d004cad2ddf06a904f61948527b11c530906dc8d123a6db68fcb252",
+      "source_id": "c039"
+    },
+    {
+      "filename": "c040-redacted.pdf",
+      "sha256": "03c9982a7b8964387134df2e7b222f9f64381e8cf9fc79bdce0d26511835b6b9",
+      "source_id": "c040"
+    },
+    {
+      "filename": "c041-redacted.pdf",
+      "sha256": "abc6f7573665d1ad42759cc9c6b90982cbf896fd732e41e673ddbe270f819584",
+      "source_id": "c041"
+    },
+    {
+      "filename": "c042-redacted.pdf",
+      "sha256": "1d6142ea58773d85108d0a4be23a7254dfb5ce981c7cf0ba9319c310ae66738b",
+      "source_id": "c042"
+    },
+    {
+      "filename": "c043-redacted.pdf",
+      "sha256": "4441b4773eca9fff4d236ab6caf9d6db8ac193be334f50a608376dbb82b07837",
+      "source_id": "c043"
+    },
+    {
+      "filename": "c044-redacted.pdf",
+      "sha256": "353b7df7150689d401ffa88e36182cd04d6f93d11c3f97ee2438f14c08db456a",
+      "source_id": "c044"
+    },
+    {
+      "filename": "c045-redacted.pdf",
+      "sha256": "2cbbf9ee3c155a71187f6440f6b575490fa704d42a32e006c98dcdd69f53b76a",
+      "source_id": "c045"
+    },
+    {
+      "filename": "c046-redacted.pdf",
+      "sha256": "2943f24262203e37c952041715656681680da25ccdc50c1c90e1da10b22e09c4",
+      "source_id": "c046"
+    },
+    {
+      "filename": "c047-redacted.pdf",
+      "sha256": "6d1a0152b14e2829f3635e4dbf4740f6421724a9a28225a83d713ae157f4eb2c",
+      "source_id": "c047"
+    },
+    {
+      "filename": "c048-redacted.pdf",
+      "sha256": "4b118dc838b4c80ff265fcb6c6272b7ea47e5d64ca4dd43e11e921dfd48b845f",
+      "source_id": "c048"
+    },
+    {
+      "filename": "c049-redacted.pdf",
+      "sha256": "9247aeee28a3458d3c1a7d1bcd23b442729b73f735b531ef7c10c5dc43b3816f",
+      "source_id": "c049"
+    },
+    {
+      "filename": "c050-redacted.pdf",
+      "sha256": "bc1d8dab505633dcbf7e3df5f81c4988def80963222a0e0d82e48512865090e2",
+      "source_id": "c050"
+    }
+  ],
+  "attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+  "decision": "APPROVE",
+  "git_tracking_allowed": false,
+  "privacy_status": "APPROVED_CONTROLLED",
+  "public_release_allowed": false,
+  "reviewer_id": "reviewer-user-001",
+  "role": "PRIMARY",
+  "schema_version": "1.0.0",
+  "uncertainty": false
+}

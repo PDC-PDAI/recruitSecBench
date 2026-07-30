@@ -1,0 +1,620 @@
+[
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "email": 1,
+      "name": 1,
+      "phone": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c001",
+    "source_sha256": "37cec252cb9d43462c968675177c907ccc79fed78d66c1fcb6e6ce22e38f1451"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "email": 1,
+      "name": 6,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c002",
+    "source_sha256": "fb6f9d53994aebf63c0b4e0361154c5ec00ce38cedda5ab0582c914d790fd2d7"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 9,
+      "name": 7,
+      "phone": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c003",
+    "source_sha256": "0b27e35f89c79c090785486ceeb617d34db02a5d26979d9b8e26676e88a3eb68"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "email": 1,
+      "name": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c004",
+    "source_sha256": "781376fd2d8ac4db1fc10821579edc1b8351e2cf3106b59cefcca093c09f8486"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 11,
+      "email": 1,
+      "name": 2,
+      "phone": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c005",
+    "source_sha256": "30922eb9778b36d77a598cfee2c4daef333a5f5772bd92d20290b6e222822a45"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 13,
+      "email": 1,
+      "name": 3,
+      "url": 2
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c006",
+    "source_sha256": "6d3535e0cd00f32e2c0dcaf750502a05c5935fc97bbc0248ee1927891f1d4222"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 7,
+      "name": 4,
+      "phone": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c007",
+    "source_sha256": "4ef15268807bd75164ea925ee37ec98779e09f7dbdee53cf66bdb10a99b09f65"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 5,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c008",
+    "source_sha256": "69c7940f09c973274817b64bc7e6e361a202a7350dbafc13c7fd29956abe0c0a"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 25,
+      "name": 9,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c009",
+    "source_sha256": "b3a4969938be0cb3f413c9cf7101510baba938f2e1b619baea5d8156b132ab16"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 16,
+      "email": 1,
+      "name": 4,
+      "url": 2
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c010",
+    "source_sha256": "f65ddd99e1791513fb457ee7a79d2f842a1b6590de51cf5bc2c651263e4bdfbf"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 14,
+      "name": 10,
+      "url": 2
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c011",
+    "source_sha256": "a0478b9fa6a3b2e63eb4d93baac05c4f87a4321054b996aa9ac864a7051ee921"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 2,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c012",
+    "source_sha256": "fcfa13935a76e899a90f18392de637e6199550c8ad7f326690204e851608e51f"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 7,
+      "name": 1,
+      "phone": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c013",
+    "source_sha256": "96a5186c18ad75102be3b821974c0cef13bba49e23c561bfb8b1a0d71032f2d4"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 5,
+      "name": 6,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c014",
+    "source_sha256": "d21d37349749638d169f9d891adb798fdb0f4a78820eb75999962278792b5007"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 10,
+      "name": 3,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c015",
+    "source_sha256": "94e2fa81ca03bdf12d259b82922beb00fe74d169575d4db1bfb9b8fd6e716ef8"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c016",
+    "source_sha256": "ea5960021f492493fe13ccd34ebb137803d6b849862c6e6d211827c60d50314b"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 5,
+      "name": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c017",
+    "source_sha256": "e4619bb88874aa4a54bb45d896e9bd712e40029637d6809348fbb9c604bf06a5"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 7,
+      "name": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c018",
+    "source_sha256": "18f64db1fcddc47e89d057887bce1525eb4168cf3fa42421c9442997acc2ae8e"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 18,
+      "email": 1,
+      "name": 5,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c019",
+    "source_sha256": "ff4a84e5aedbc04c7f246935ad8c2bd8dea06308617d0f829f87a9eb7aac90ba"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 2,
+      "url": 2
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c020",
+    "source_sha256": "cf60d508df089c084d6883aeb2f37ecbe485969c7ccbe0eab398e01b6166da9f"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 9,
+      "name": 4,
+      "phone": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c021",
+    "source_sha256": "59ed9d55ff0cd5eb83aef2d33e5dad2e392150e821e750f753072a4b0ab47bb7"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 2,
+      "url": 2
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c022",
+    "source_sha256": "5a5b3c9f48c006bb14c08f98c3e74ea19cf46c3598c222a21e3b8ec7815f0703"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 6,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c023",
+    "source_sha256": "fa4a7751cf05b0e88cd68d4c24d5117a667c10ef514bec75aac32e26a7867dd9"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 7,
+      "name": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c024",
+    "source_sha256": "a61dc6c0def8d4877341523bd1a50130fcd7599c34213382b9612c735a100d0f"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 26,
+      "name": 7,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c025",
+    "source_sha256": "05c08b409886bbe42ff10a92164672b01c277b2d287af91013a447c882471ca9"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 15,
+      "name": 2,
+      "url": 7
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c026",
+    "source_sha256": "fd8739bb7feb66c46434a394c6126e72624843432125d03d281e1916ef75d332"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 3,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c027",
+    "source_sha256": "ea374bb9ab459f66e706fbacf8ff93cb47318941e854dbdfcd58439312db5c75"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 5,
+      "name": 3,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c028",
+    "source_sha256": "7f2dd634e08af0e32a833d246365b1d775d5a10c25a1da42a97e42f2723c3b2b"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 9,
+      "name": 4,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c029",
+    "source_sha256": "643586090c49b154e6d427be0cdc0f79155c6e9af5a6f0dedc27f1f976d843a0"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 6,
+      "name": 3,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c030",
+    "source_sha256": "94b7011c5f069fbe4267c3ed8eec58184a2b9240d494d440f3d767d961a31125"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 5,
+      "name": 3,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c031",
+    "source_sha256": "c180e7b652f3882212b7d07cfe26011d0fc5d4604d9afc5c03afd1d7b57fc77e"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 11,
+      "email": 1,
+      "name": 6,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c032",
+    "source_sha256": "e0ebe8b0ec96046e9a19492aa09b8028c1a0be1e4926be534dc75588b49d0001"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 6,
+      "name": 5,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c033",
+    "source_sha256": "efeca13e39bcf7ae5054b438b241e55ec074e1c1a753c465f0857a201d0488ab"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 17,
+      "name": 3,
+      "url": 5
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c034",
+    "source_sha256": "2131405ca22ec9ef5ed0be44a8c60b584e3bbe9930e3bd08eeb2b7c0b309275c"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 3,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c035",
+    "source_sha256": "071307c1c461c8dd495aaee5e65f750e1ec1349edd0768771797a26936b2468f"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 10,
+      "email": 1,
+      "name": 1,
+      "url": 2
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c036",
+    "source_sha256": "9059d0dea390c8b402fadfae7c817110e0f1971bbce825339d532fccc77364ee"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 7,
+      "name": 5,
+      "url": 2
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c037",
+    "source_sha256": "6935a9aac83f600a5f0f5dd35669ac34e3b4727619a1f09cf1c685240b0cf020"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 5,
+      "name": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c038",
+    "source_sha256": "57e1f9e2d1101b6be2b041d3a5581ce90fde14dc1be1325fae76682f3d95ea7f"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 2,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c039",
+    "source_sha256": "abf7039025f9d03f39b6578a2c5bad5bfe1f1ac3cc8317e85654395d5005d3e0"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 19,
+      "name": 8,
+      "url": 6
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c040",
+    "source_sha256": "31ab04f9097cfc132428768075177e60639351e14e0560dad9c5f1976620b15b"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 6,
+      "name": 2,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c041",
+    "source_sha256": "ca26cc194ac287b10db6760b4cf55e7fb488c8329db22d2f87487e9e77401245"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 13,
+      "name": 3,
+      "phone": 1,
+      "url": 2
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c042",
+    "source_sha256": "06b44611b8421ce630ecbe3d3434ee8967cfec306b85f86216952e187dd5cd20"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 13,
+      "name": 6,
+      "phone": 2,
+      "url": 3
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c043",
+    "source_sha256": "a0d2045866b4f7a869f287e08234d977e73a647a17ec82a50ba166ee8c90fdb8"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 11,
+      "name": 6,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c044",
+    "source_sha256": "e5c9f2c3f70b1475cd411f692d670e9c26ffb11df1f8ed963b0d858f58d350e8"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 11,
+      "name": 1,
+      "phone": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c045",
+    "source_sha256": "1a99036b6838f908a621cf4a8bfb895a4932266f0350cc8f55a3c660d7d0ffd0"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 5,
+      "name": 2,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c046",
+    "source_sha256": "e0440cdc40da52928f610cc2e470967db2a77fb089819aee45eefbb3aab1a08e"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 10,
+      "name": 2,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c047",
+    "source_sha256": "98b3dc7a24f574f809c69a5d6d1d6c78aed677bcc2cfbcf674651bbc9901c8ba"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 8,
+      "name": 2,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c048",
+    "source_sha256": "b7309e81b113c90a9d4d36a70ac6ea7ab719acaa9f924b5f0e3d66bf6f1a06cc"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 5,
+      "name": 1,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c049",
+    "source_sha256": "8ebcad5f9c84f7a57730edf2ebfd5a7d28dad26996bbb6d618601ebbef4edd6b"
+  },
+  {
+    "privacy_status": "APPROVED_CONTROLLED",
+    "redaction_counts": {
+      "contact": 12,
+      "name": 3,
+      "url": 1
+    },
+    "review_attestation_hash": "354d8c6d5355301ff12a331392e84283b81bf5227d2074a6bd3cc5fed0f0f62a",
+    "reviewer_id": "reviewer-user-001",
+    "source_id": "c050",
+    "source_sha256": "1f5aad394b6491244461fb6001d45b97587baae25e515b57b3529c1b17711314"
+  }
+]

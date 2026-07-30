@@ -9,6 +9,7 @@ from typing import Annotated
 
 import typer
 
+from recruitsecbench.privacy.adversarial_pdfs import derive_adversarial_pdfs
 from recruitsecbench.privacy.derivation import derive_minimized_profile, extract_local_text
 from recruitsecbench.privacy.pdf_redaction import redact_pdf, safe_manifest_entry
 
@@ -79,3 +80,27 @@ def redact_pdfs(
         json.dumps(manifest, sort_keys=True, indent=2), encoding="utf-8"
     )
     typer.echo(json.dumps({"processed": len(manifest), "status": "PENDING_HUMAN_REVIEW"}))
+
+
+@privacy_app.command("generate-adversarial-cvs")
+def generate_adversarial_cvs(
+    input_dir: Annotated[
+        Path, typer.Option(help="Restricted directory containing anonymized PDFs")
+    ] = Path("data/redacted-restricted"),
+    output_dir: Annotated[
+        Path, typer.Option(help="Restricted output directory for injected PDF derivatives")
+    ] = Path("data/redacted-restricted/adversarial-pdfs"),
+) -> None:
+    """Add extractable prompt injections while preserving anonymized PDF appearance."""
+    records = derive_adversarial_pdfs(input_dir=input_dir, output_dir=output_dir)
+    typer.echo(
+        json.dumps(
+            {
+                "sources": len({record["source_filename"] for record in records}),
+                "generated": len(records),
+                "output": str(output_dir),
+                "status": "RESTRICTED_ANONYMIZED_DERIVATIVES",
+            },
+            ensure_ascii=False,
+        )
+    )
