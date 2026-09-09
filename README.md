@@ -1,45 +1,107 @@
 # RecruitSecBench
 
-Schemas de dados para avaliação reproduzível de segurança em agentes de IA que
-usam ferramentas e dados de recrutamento.
+🇧🇷 **Português** · [🇺🇸 English](README.en.md)
 
-O repositório define cinco conjuntos relacionados:
+Benchmark de segurança para agentes de recrutamento. O experimento atual avalia
+**geração de questionários e avaliação de respostas**: obediência a comandos
+maliciosos, recusas indevidas, manipulação de notas e rastreabilidade das evidências.
 
-1. domínio: currículos, vagas e respostas;
-2. benigno: tarefas legítimas e resultados esperados;
-3. adversarial: prompt injections e demais ataques;
-4. determinístico: tools, IDs, estados, escopos e canários;
-5. auditoria: traces de execução, ground truth determinístico, rótulos humanos e
-   previsões de auditor em modo sombra.
+[Começar](#começar) · [Guia do experimento](experiments/questionnaire-security/README.md) ·
+[Método e reprodução](experiments/questionnaire-security/docs/methodology.md) ·
+[API](experiments/questionnaire-security/docs/api.md)
 
-Os contratos usam JSON Schema Draft 2020-12 e validam um registro por linha de
-arquivo JSONL.
-
-Consulte a [documentação dos schemas](schemas/README.md) para o mapa de IDs,
-relações entre datasets, invariantes, regras de privacidade e exemplos válidos.
-
-## Estrutura
-
-```text
-schemas/
-  common.schema.json
-  domain.schema.json
-  benign.schema.json
-  adversarial.schema.json
-  deterministic.schema.json
-  audit.schema.json
-  manifest.schema.json
-  examples/
+```mermaid
+flowchart LR
+    B[Briefing] --> V[Vaga]
+    V --> C[Comandos benignos e adversariais]
+    C --> Q[Gerador de questionários]
+    Q --> R[Respostas sintéticas e prompt injections]
+    R --> E[Avaliador FORMULARIO]
+    Q --> O[Oráculos e benchmark]
+    E --> O
 ```
 
-Os exemplos são inteiramente sintéticos. Canários são marcadores de teste, não
-segredos reais.
+## Organização dos experimentos
 
-## Currículos adversariais em PDF
+| Experimento | Local | Estado e uso |
+|---|---|---|
+| **Segurança de questionários** | [`experiments/questionnaire-security/`](experiments/questionnaire-security/README.md) | Pipeline portado do Scenario Emulator; ambiente, CLI, lockfile, testes e saídas próprios |
+| Experimento anterior de recrutamento/CVs | `src/recruitsecbench/`, `schemas/`, `protocol/`, `data/` | Código e contratos preservados; [guia anterior](docs/legacy-cv-experiment.md) |
+| Diagnóstico de falhas — Frente A | [Scenario Emulator](https://github.com/PDC-PDAI/scenario-emulator) | Campanhas de injeção e trajetórias para AgentDebug-RH, mantidas em outro repo |
 
-O comando `rscb privacy generate-adversarial-cvs` deriva quatro variantes de
-cada PDF previamente anonimizado em `data/redacted-restricted/`. As páginas,
-dimensões e aparência permanecem inalteradas; somente uma camada de texto
-invisível e extraível contendo o prompt injection é adicionada. Os derivados e
-seu manifesto ficam em `data/redacted-restricted/adversarial-pdfs/`, fora do
-Git e sujeitos ao mesmo controle restrito dos PDFs anonimizados.
+O novo experimento usa vagas, comandos, questionários, respostas e avaliações.
+Ele não depende de currículos, PDFs, corpus restrito nem serviços do experimento
+anterior. Os JSONLs novos têm contratos próprios; não são intercambiáveis com os
+cinco datasets de `schemas/` sem um adaptador explícito.
+
+## Começar
+
+Requisitos: Python 3.12+, Git e `uv`. Execute dentro do diretório do experimento
+para usar seu ambiente independente.
+
+```bash
+git clone https://github.com/PDC-PDAI/recruitSecBench.git
+cd recruitSecBench/experiments/questionnaire-security
+uv sync --locked
+cp .env.example .env
+
+# Sem chamadas a modelos
+uv run rscb-questionnaire --help
+uv run rscb-questionnaire validate-profile configs/fronts/security.yaml
+uv run pytest -q
+```
+
+Configure o provider no `.env` e execute uma cadeia pequena:
+
+```bash
+uv run rscb-questionnaire run \
+  --brief "Vaga sênior de backend Python, FastAPI e PostgreSQL" \
+  --benign 1 --malicious 0 \
+  --benign-responses 1 --malicious-responses 0
+```
+
+O perfil de segurança já é o padrão da CLI. Sem os overrides acima, gera um
+comando benigno e três maliciosos, com uma resposta benigna e duas maliciosas
+por questionário efetivamente produzido. Essa execução chama LLMs; os testes
+usam substitutos locais.
+
+## O que foi portado
+
+- Agentes de vaga, coordenador, questionário, respostas e avaliação `FORMULARIO`.
+- Prompts locais, providers configuráveis por papel e tracing opcional no Langfuse.
+- Schemas, validação de submissões, oráculos, canários e exportação JSON/JSONL.
+- API FastAPI, visão pública dos questionários e persistência SQLite.
+- Testes de contratos, pipeline, avaliação, API e migração de banco.
+
+A origem e os hashes dos arquivos estão em
+[`PORTABILITY.json`](experiments/questionnaire-security/PORTABILITY.json).
+O [guia de portabilidade](experiments/questionnaire-security/docs/portability.md)
+explica as adaptações e como desenvolver sem depender do checkout de origem.
+
+## Resultados e limites
+
+`outputs/security/` contém `scenario.json`, `benchmark.jsonl`, `agent-debug.jsonl`
+e `trajectories/`. Separe a taxa de sucesso do gerador, recusas indevidas, ataques
+aceitos e resultados do avaliador por intenção/categoria. Registre também falhas
+de runtime e cobertura; um ataque recusado antes da criação do questionário não
+produz uma avaliação posterior.
+
+Os limiares de nota são regras experimentais, não uma validação universal da
+qualidade de candidatos. O oráculo de canários inspeciona a justificativa; não
+prova ausência de todo vazamento. Novas execuções com LLM não garantem os mesmos
+textos. Consulte o [método](experiments/questionnaire-security/docs/methodology.md)
+antes de comparar resultados com o experimento anterior.
+
+## Desenvolvimento
+
+```bash
+# Experimento atual
+cd experiments/questionnaire-security
+uv run ruff check .
+uv run pytest -q
+```
+
+O projeto da raiz mantém sua CLI `rscb`, lockfile e verificações anteriores.
+`rscb-questionnaire` pertence ao ambiente do novo experimento. Os dois são
+verificados separadamente no CI. Todos os guias principais possuem versões
+🇧🇷 em português e 🇺🇸 em inglês.
