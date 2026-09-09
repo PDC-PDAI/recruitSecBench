@@ -2,6 +2,10 @@
 
 🇧🇷 **Português** · [🇺🇸 English](portability.en.md) · [Início](../README.md)
 
+O fluxo completo aceita `baseline`, `baseline_r1`, `fides` e `camel` no gerador
+e no avaliador. Veja [defesas e bateria histórica](defenses.md) para as revisões
+de origem, diferenças entre serviços e o protocolo exclusivo de geração.
+
 ## Fronteira do projeto
 
 O experimento é uma distribuição Python própria, `recruitsecbench-questionnaire`,
@@ -17,6 +21,7 @@ checkout. `.env` e SQLite ficam no diretório de execução ou em `QUESTIONNAIRE
 
 | Caminho em `rscb_questionnaire/` | Responsabilidade |
 |---|---|
+| `variants/`, `battery.py` | Baseline histórico, FIDES/CaMeL e bateria de geração |
 | `agents/` | Modelos e adaptação por provider/papel |
 | `prompts/` | Conteúdo local, templates e resolução Langfuse |
 | `services/job_description/`, `services/coordinator_prompt/` | Preparação do cenário e comandos |

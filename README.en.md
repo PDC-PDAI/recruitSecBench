@@ -81,6 +81,16 @@ To configure its model independently, set `EVALUATOR_LLM_PROVIDER` and
 `EVALUATOR_MODEL` in the experiment's `.env`. The [API](experiments/questionnaire-security/docs/api.en.md)
 also supports evaluating manual submissions.
 
+## FIDES, CaMeL and the historical battery
+
+The questionnaire experiment includes **baseline, baseline R1, FIDES and CaMeL**,
+with a generator and evaluator for each variant. `run --defense fides` and
+`run --defense camel` select both stages. The historical generation battery is
+available through `rscb-questionnaire-battery`: 380 cases per repetition.
+
+[Implementation map, source branches and reproduction commands](experiments/questionnaire-security/docs/defenses.en.md).
+The generation battery and the full evaluation pipeline are documented separately.
+
 ## Ported components
 
 - Job, coordinator, questionnaire, answer generation, and `FORMULARIO` evaluation agents.

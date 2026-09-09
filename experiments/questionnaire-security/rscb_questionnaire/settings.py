@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from rscb_questionnaire.variants import Defense
+
 ROOT_DIR = Path(os.environ.get("QUESTIONNAIRE_HOME", Path.cwd())).resolve()
 load_dotenv(ROOT_DIR / ".env")
 
@@ -21,6 +23,7 @@ class Settings(BaseSettings):
     )
 
     ENVIRONMENT: str = "development"
+    QUESTIONNAIRE_DEFENSE: Defense = Defense.BASELINE
 
     LLM_PROVIDER: Literal["openai", "openai_responses", "openai_like", "ollama", "ceia"] = "openai"
     OPENAI_API_KEY: str = ""

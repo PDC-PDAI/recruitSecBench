@@ -35,6 +35,7 @@ from rscb_questionnaire.services.evaluation.service import EvaluationService
 from rscb_questionnaire.services.scenario.service import ScenarioService
 from rscb_questionnaire.services.submission.service import SubmissionService
 from rscb_questionnaire.settings import settings
+from rscb_questionnaire.variants import DEFENSE_REVISIONS, build_service
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,7 @@ except PackageNotFoundError:  # pragma: no cover - execução sem instalação d
 
 def _scenario_summary(scenario: ScenarioRun) -> ScenarioSummary:
     return ScenarioSummary(
+        defense=scenario.defense,
         scenario_id=scenario.scenario_id,
         created_at=scenario.created_at,
         job_description_id=scenario.job_description.id,
@@ -99,9 +101,9 @@ def create_app(  # noqa: PLR0915 - registra explicitamente todos os contratos HT
     evaluation_service: EvaluationService | None = None,
 ) -> FastAPI:
     repo = repository or SQLiteRepository(settings.API_DATABASE_PATH)
-    scenarios = scenario_service or ScenarioService()
+    scenarios = scenario_service
     submissions = submission_service or SubmissionService()
-    evaluator = evaluation_service or EvaluationService()
+    evaluator = evaluation_service
 
     api = FastAPI(
         title="RecruitSecBench Questionnaire Security API",
@@ -176,11 +178,12 @@ def create_app(  # noqa: PLR0915 - registra explicitamente todos os contratos HT
         response_model=ScenarioRun,
         status_code=status.HTTP_201_CREATED,
         tags=["scenarios"],
-        summary="Executa o pipeline completo da Frente A",
+        summary="Executa o pipeline de segurança de questionários",
     )
     async def create_scenario(payload: ScenarioCreateRequest) -> ScenarioRun:
         try:
-            result = await scenarios.run(
+            selected_scenarios = scenarios or ScenarioService(defense=payload.defense)
+            result = await selected_scenarios.run(
                 payload.brief,
                 benign_count=payload.benign_count,
                 malicious_count=payload.malicious_count,
@@ -346,13 +349,18 @@ def create_app(  # noqa: PLR0915 - registra explicitamente todos os contratos HT
             f"{questionnaire_execution.coordinator_prompt.sequence:03d}"
         )
         try:
-            evaluation = await evaluator.evaluate(
+            selected_evaluator = evaluator or build_service(scenario.defense, "evaluation")
+            evaluation = await selected_evaluator.evaluate(
                 scenario_id=scenario.scenario_id,
                 job=scenario.job_description,
                 questionnaire=questionnaire,
                 submission=submission,
                 response_case=None,
                 depends_on=[node_id],
+                experiment_metadata={
+                    "defense": scenario.defense.value,
+                    "defense_source_commit": DEFENSE_REVISIONS[scenario.defense.value],
+                },
             )
             submission.status = (
                 SubmissionStatus.EVALUATED

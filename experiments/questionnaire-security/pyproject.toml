@@ -21,6 +21,7 @@ dependencies = [
 
 [project.scripts]
 rscb-questionnaire = "rscb_questionnaire.cli:main"
+rscb-questionnaire-battery = "rscb_questionnaire.battery:main"
 
 [build-system]
 requires = ["hatchling>=1.27"]

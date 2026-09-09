@@ -34,6 +34,8 @@ from rscb_questionnaire.services.observability.service import observation, trace
 from rscb_questionnaire.services.questionnaire.service import QuestionnaireService
 from rscb_questionnaire.services.response.service import ResponseGenerationService
 from rscb_questionnaire.services.submission.service import SubmissionService
+from rscb_questionnaire.settings import settings
+from rscb_questionnaire.variants import DEFENSE_REVISIONS, Defense, build_service
 
 logger = structlog.get_logger(__name__)
 
@@ -93,6 +95,7 @@ class ScenarioService:
     def __init__(
         self,
         *,
+        defense: Defense | str | None = None,
         job_service: JobDescriptionService | None = None,
         coordinator_service: CoordinatorPromptService | None = None,
         questionnaire_service: QuestionnaireService | None = None,
@@ -100,11 +103,14 @@ class ScenarioService:
         evaluation_service: EvaluationService | None = None,
         submission_service: SubmissionService | None = None,
     ) -> None:
+        self.defense = Defense(defense or settings.QUESTIONNAIRE_DEFENSE)
         self.job_service = job_service or JobDescriptionService()
         self.coordinator_service = coordinator_service or CoordinatorPromptService()
-        self.questionnaire_service = questionnaire_service or QuestionnaireService()
+        self.questionnaire_service = questionnaire_service or build_service(
+            self.defense, "questionnaire"
+        )
         self.response_service = response_service or ResponseGenerationService()
-        self.evaluation_service = evaluation_service or EvaluationService()
+        self.evaluation_service = evaluation_service or build_service(self.defense, "evaluation")
         self.submission_service = submission_service or SubmissionService()
 
     async def run(  # noqa: PLR0915 - fluxo linear preserva as etapas auditáveis
@@ -133,7 +139,10 @@ class ScenarioService:
         response_total = benign_response_count + malicious_response_count
         scenario_id = f"scenario-{uuid.uuid4()}"
         research_targets = _research_targets(research_front)
-        experiment_context = _experiment_provenance(research_front, experiment_profile)
+        experiment_context = {
+            **_experiment_provenance(research_front, experiment_profile),
+            "defense": self.defense.value,
+        }
         experiment_tags = [
             value
             for value in (
@@ -390,7 +399,13 @@ class ScenarioService:
                                     experiment_profile=experiment_profile,
                                 )
                             )
+                    for record in records:
+                        record.provenance["defense"] = self.defense.value
+                        record.provenance["defense_source_commit"] = DEFENSE_REVISIONS[
+                            self.defense.value
+                        ]
                     result = ScenarioRun(
+                        defense=self.defense,
                         scenario_id=scenario_id,
                         research_targets=research_targets,
                         research_front=research_front,

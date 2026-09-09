@@ -2,6 +2,10 @@
 
 [🇧🇷 Português](methodology.md) · 🇺🇸 **English** · [Home](../README.en.md)
 
+The full pipeline supports `baseline`, `baseline_r1`, `fides` and `camel` for
+both generation and evaluation. See [defenses and historical battery](defenses.en.md)
+for source revisions, service differences and the generation-only protocol.
+
 ## Experimental unit
 
 A scenario starts with a synthetic job brief. `JobDescriptionService` produces
@@ -16,6 +20,9 @@ this protocol. Role settings allow the attack generator and evaluator to use
 different models.
 
 ## Implemented oracles
+
+The table describes the baseline and shared checks. Variants may reject or
+validate data before these steps; consult the selected defense implementation.
 
 | Component | Condition | Expected success |
 |---|---|---|

@@ -2,6 +2,10 @@
 
 [🇧🇷 Português](portability.md) · 🇺🇸 **English** · [Home](../README.en.md)
 
+The full pipeline supports `baseline`, `baseline_r1`, `fides` and `camel` for
+both generation and evaluation. See [defenses and historical battery](defenses.en.md)
+for source revisions, service differences and the generation-only protocol.
+
 ## Project boundary
 
 This is an independent Python distribution, `recruitsecbench-questionnaire`,
@@ -17,6 +21,7 @@ checkout. `.env` and SQLite use the runtime directory or `QUESTIONNAIRE_HOME`.
 
 | Path under `rscb_questionnaire/` | Responsibility |
 |---|---|
+| `variants/`, `battery.py` | Historical baselines, FIDES/CaMeL and generation battery |
 | `agents/` | Models and provider/role adaptation |
 | `prompts/` | Local content, templates, and Langfuse resolution |
 | `services/job_description/`, `services/coordinator_prompt/` | Scenario preparation and commands |

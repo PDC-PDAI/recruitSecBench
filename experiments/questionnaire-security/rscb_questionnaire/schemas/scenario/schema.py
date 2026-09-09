@@ -12,11 +12,13 @@ from rscb_questionnaire.schemas.experiment.schema import ResearchFront
 from rscb_questionnaire.schemas.job_description.schema import JobDescription
 from rscb_questionnaire.schemas.questionnaire.schema import QuestionnaireExecution
 from rscb_questionnaire.schemas.response.schema import ResponseGenerationBatch
+from rscb_questionnaire.variants import Defense
 
 
 class ScenarioRun(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    defense: Defense = Defense.BASELINE
     scenario_id: str = Field(default_factory=lambda: f"scenario-{uuid.uuid4()}")
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     research_targets: list[str] = Field(

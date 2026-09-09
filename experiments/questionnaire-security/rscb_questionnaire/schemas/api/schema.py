@@ -5,6 +5,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from rscb_questionnaire.schemas.questionnaire.schema import QuestionType
+from rscb_questionnaire.variants import Defense
 
 _MAX_PROMPTS_PER_SCENARIO = 100
 _MAX_RESPONSES_PER_QUESTIONNAIRE = 20
@@ -14,6 +15,7 @@ _MAX_EVALUATIONS_PER_SCENARIO = 200
 class ScenarioCreateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
+    defense: Defense | None = None
     brief: str = Field(min_length=3, max_length=10_000)
     benign_count: int = Field(default=3, ge=0, le=100)
     malicious_count: int = Field(default=3, ge=0, le=100)
@@ -42,6 +44,8 @@ class ScenarioCreateRequest(BaseModel):
 
 class ScenarioSummary(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+    defense: Defense = Defense.BASELINE
 
     scenario_id: str
     created_at: datetime

@@ -2,6 +2,10 @@
 
 🇧🇷 **Português** · [🇺🇸 English](methodology.en.md) · [Início](../README.md)
 
+O fluxo completo aceita `baseline`, `baseline_r1`, `fides` e `camel` no gerador
+e no avaliador. Veja [defesas e bateria histórica](defenses.md) para as revisões
+de origem, diferenças entre serviços e o protocolo exclusivo de geração.
+
 ## Unidade experimental
 
 Um cenário começa com um briefing sintético de vaga. `JobDescriptionService`
@@ -16,6 +20,9 @@ não participam deste protocolo. O gerador de ataques e o avaliador podem usar
 modelos diferentes por configuração de papel.
 
 ## Oráculos implementados
+
+A tabela descreve o baseline e os checks comuns. As variantes podem recusar ou
+validar dados antes desses passos; consulte o código da defesa selecionada.
 
 | Componente | Condição | Sucesso esperado |
 |---|---|---|

@@ -20,6 +20,7 @@ from rscb_questionnaire.services.agent_debug.service import (
 from rscb_questionnaire.services.experiment.profile import load_experiment_profile
 from rscb_questionnaire.services.scenario.service import ScenarioService
 from rscb_questionnaire.settings import settings
+from rscb_questionnaire.variants import Defense
 
 _T = TypeVar("_T")
 
@@ -40,6 +41,11 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path(__file__).parent / "profiles" / "security.yaml",
         help="Security profile; explicit flags override YAML values.",
+    )
+    run.add_argument(
+        "--defense",
+        choices=[item.value for item in Defense],
+        help="baseline, baseline_r1, fides or camel; defaults to QUESTIONNAIRE_DEFENSE.",
     )
     run.add_argument("--benign", type=int, help="Quantidade de comandos benignos.")
     run.add_argument("--malicious", type=int, help="Quantidade de comandos malignos.")
@@ -76,7 +82,8 @@ def _parser() -> argparse.ArgumentParser:
         help="Diretório onde será salvo um JSON por trajetória executada.",
     )
 
-    commands.add_parser("sync-prompts", help="Sincroniza os prompts locais com Langfuse.")
+    sync = commands.add_parser("sync-prompts", help="Sincroniza os prompts locais com Langfuse.")
+    sync.add_argument("--defense", choices=[item.value for item in Defense], default=None)
 
     validate_profile = commands.add_parser(
         "validate-profile",
@@ -150,7 +157,9 @@ def _apply_profile(args: argparse.Namespace) -> ExperimentProfile | None:
 async def _run(args: argparse.Namespace) -> int:
     profile: ExperimentProfile | None = args.experiment_profile
     brief = args.brief or args.brief_file.read_text(encoding="utf-8")
-    result = await ScenarioService().run(
+    defense = getattr(args, "defense", None)
+    service = ScenarioService(defense=defense) if defense is not None else ScenarioService()
+    result = await service.run(
         brief,
         benign_count=args.benign,
         malicious_count=args.malicious,
@@ -238,7 +247,7 @@ def main() -> int:  # noqa: PLR0911 - dispatcher explícito mantém os comandos 
     if args.command == "sync-prompts":
         from rscb_questionnaire.sync_prompts import sync_prompts  # noqa: PLC0415
 
-        return sync_prompts()
+        return sync_prompts(args.defense or settings.QUESTIONNAIRE_DEFENSE)
     if args.command == "validate-profile":
         try:
             return _validate_profile(args)

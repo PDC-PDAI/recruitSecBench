@@ -2,6 +2,10 @@
 
 [🇧🇷 Português](api.md) · 🇺🇸 **English** · [Home](../README.en.md)
 
+The full pipeline supports `baseline`, `baseline_r1`, `fides` and `camel` for
+both generation and evaluation. See [defenses and historical battery](defenses.en.md)
+for source revisions, service differences and the generation-only protocol.
+
 ## Start
 
 ```bash

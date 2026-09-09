@@ -6,6 +6,17 @@ Experimento independente portado do Scenario Emulator: geração de vagas e
 questionários, comandos adversariais, respostas sintéticas e avaliação da dimensão
 `FORMULARIO`. Nenhum currículo ou PDF é necessário.
 
+## Baseline, FIDES e CaMeL
+
+As variantes incluem **gerador e avaliador**. Use `run --defense fides` ou
+`run --defense camel`; `baseline` mantém a implementação da portabilidade inicial
+e `baseline_r1` preserva a versão da bateria histórica.
+
+A bateria de 380 casos por repetição também está incluída:
+`uv run rscb-questionnaire-battery --defense fides --dry-run`.
+Ela testa somente geração; o comando `run` executa o fluxo com avaliador.
+Veja [origens, implementações e comandos](docs/defenses.md).
+
 ## Instalação e configuração
 
 Execute os comandos deste guia em `experiments/questionnaire-security/`.
@@ -125,6 +136,7 @@ uv build
 
 | Guia | Português | English |
 |---|---|---|
+| FIDES, CaMeL e bateria histórica | [Defesas](docs/defenses.md) | [Defenses](docs/defenses.en.md) |
 | Método, oráculos e reprodução | [Método](docs/methodology.md) | [Methodology](docs/methodology.en.md) |
 | Portabilidade e arquitetura | [Desenvolvimento](docs/portability.md) | [Development](docs/portability.en.md) |
 | API e submissões | [API](docs/api.md) | [API](docs/api.en.md) |

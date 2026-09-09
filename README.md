@@ -81,6 +81,16 @@ Para configurar seu modelo separadamente, use `EVALUATOR_LLM_PROVIDER` e
 `EVALUATOR_MODEL` no `.env` do experimento. A [API](experiments/questionnaire-security/docs/api.md)
 também permite avaliar submissões manuais.
 
+## FIDES, CaMeL e bateria histórica
+
+O experimento de questionários inclui **baseline, baseline R1, FIDES e CaMeL**,
+com gerador e avaliador em cada variante. `run --defense fides` e
+`run --defense camel` selecionam as duas etapas. A bateria histórica de geração
+está disponível em `rscb-questionnaire-battery`: 380 casos por repetição.
+
+[Mapa das implementações, branches de origem e comandos de reprodução](experiments/questionnaire-security/docs/defenses.md).
+O guia distingue a bateria de geração do fluxo completo com avaliação.
+
 ## O que foi portado
 
 - Agentes de vaga, coordenador, questionário, respostas e avaliação `FORMULARIO`.

@@ -6,6 +6,17 @@ An independent experiment ported from Scenario Emulator: job and questionnaire
 generation, adversarial commands, synthetic answers, and `FORMULARIO` evaluation.
 No CV or PDF is required.
 
+## Baseline, FIDES and CaMeL
+
+Variants include **both generator and evaluator**. Use `run --defense fides` or
+`run --defense camel`; `baseline` keeps the initial port implementation and
+`baseline_r1` retains the historical battery version.
+
+The 380-case-per-repetition battery is also included:
+`uv run rscb-questionnaire-battery --defense fides --dry-run`.
+It tests generation only; `run` executes the pipeline including evaluation.
+See [origins, implementations and commands](docs/defenses.en.md).
+
 ## Installation and configuration
 
 Run this guide's commands from `experiments/questionnaire-security/`.
@@ -125,6 +136,7 @@ uv build
 
 | Guide | Português | English |
 |---|---|---|
+| FIDES, CaMeL and historical battery | [Defesas](docs/defenses.md) | [Defenses](docs/defenses.en.md) |
 | Method, oracles, and reproduction | [Método](docs/methodology.md) | [Methodology](docs/methodology.en.md) |
 | Portability and architecture | [Desenvolvimento](docs/portability.md) | [Development](docs/portability.en.md) |
 | API and submissions | [API](docs/api.md) | [API](docs/api.en.md) |
