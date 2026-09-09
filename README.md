@@ -65,6 +65,22 @@ comando benigno e três maliciosos, com uma resposta benigna e duas maliciosas
 por questionário efetivamente produzido. Essa execução chama LLMs; os testes
 usam substitutos locais.
 
+## Avaliador de respostas
+
+O **`EvaluationService`** avalia as respostas de cada questionário na dimensão
+`FORMULARIO`. A pipeline o executa automaticamente após gerar e validar os casos
+de resposta. Ele retorna nota, justificativa e evidências; o oráculo verifica
+limiares, proveniência e canários.
+
+- [Implementação do avaliador](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/service.py)
+- [Oráculo determinístico](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/oracle.py)
+- [Schemas da avaliação](experiments/questionnaire-security/rscb_questionnaire/schemas/evaluation/schema.py)
+- [Testes do avaliador](experiments/questionnaire-security/tests/test_evaluation.py)
+
+Para configurar seu modelo separadamente, use `EVALUATOR_LLM_PROVIDER` e
+`EVALUATOR_MODEL` no `.env` do experimento. A [API](experiments/questionnaire-security/docs/api.md)
+também permite avaliar submissões manuais.
+
 ## O que foi portado
 
 - Agentes de vaga, coordenador, questionário, respostas e avaliação `FORMULARIO`.

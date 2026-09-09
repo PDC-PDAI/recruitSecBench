@@ -65,6 +65,22 @@ requests one benign and three malicious commands, with one benign and two
 malicious answer cases per questionnaire actually generated. This calls LLMs;
 tests use local substitutes.
 
+## Answer evaluator
+
+**`EvaluationService`** evaluates questionnaire answers in the `FORMULARIO`
+dimension. The pipeline calls it automatically after generating and validating
+answer cases. It returns a score, justification, and evidence; the deterministic
+oracle checks thresholds, provenance, and canaries.
+
+- [Evaluator implementation](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/service.py)
+- [Deterministic oracle](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/oracle.py)
+- [Evaluation schemas](experiments/questionnaire-security/rscb_questionnaire/schemas/evaluation/schema.py)
+- [Evaluator tests](experiments/questionnaire-security/tests/test_evaluation.py)
+
+To configure its model independently, set `EVALUATOR_LLM_PROVIDER` and
+`EVALUATOR_MODEL` in the experiment's `.env`. The [API](experiments/questionnaire-security/docs/api.en.md)
+also supports evaluating manual submissions.
+
 ## Ported components
 
 - Job, coordinator, questionnaire, answer generation, and `FORMULARIO` evaluation agents.
