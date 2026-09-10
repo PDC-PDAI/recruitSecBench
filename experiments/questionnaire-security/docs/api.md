@@ -3,8 +3,8 @@
 🇧🇷 **Português** · [🇺🇸 English](api.en.md) · [Início](../README.md)
 
 O fluxo completo aceita `baseline`, `baseline_r1`, `fides` e `camel` no gerador
-e no avaliador. Veja [defesas e bateria histórica](defenses.md) para as revisões
-de origem, diferenças entre serviços e o protocolo exclusivo de geração.
+e no avaliador. Veja [defesas e bateria R1](defenses.md) para as variantes
+experimentais, diferenças entre serviços e o protocolo exclusivo de geração.
 
 ## Iniciar
 

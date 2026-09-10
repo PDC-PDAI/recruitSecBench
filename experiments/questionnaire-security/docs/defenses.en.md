@@ -1,20 +1,19 @@
-# FIDES, CaMeL and the historical battery
+# Baselines, FIDES, CaMeL and the R1 battery
 
 [🇧🇷 Português](defenses.md) · 🇺🇸 **English** · [Home](../README.en.md)
 
-## Why they belong here
+## Experimental variants
 
-FIDES and CaMeL are this project's defense variants for comparing how questionnaire
-generation and answer evaluation handle adversarial content. The initial port
-included only the active working branch; these implementations lived on separate
-Scenario Emulator branches.
+FIDES and CaMeL implement defense mechanisms for comparing how questionnaire
+generation and answer evaluation handle adversarial content. Each variant
+selects a generator and an evaluator under the same scenario contract.
 
-| `--defense` | Scenario Emulator origin | Generator and evaluator |
+| `--defense` | Role in the experiment | Generator and evaluator |
 |---|---|---|
-| `baseline` | `8fd93c0` — initial port | Implementation current when the repositories were separated |
-| `baseline_r1` | `bateria-testes-r1` · `acd083a` | Historical battery baseline, retained as its own variant |
-| `fides` | `feat/fides` · `3aae97d` | Opaque references, integrity/confidentiality labels, reference monitor and quarantined LLM |
-| `camel` | `feat/camel` · `804bece` | Separation of control and data, quarantined processing and output provenance policies |
+| `baseline` | Default full-pipeline baseline | Standard generation and evaluation services |
+| `baseline_r1` | Reference for the R1 battery | R1 generation and evaluation services |
+| `fides` | Defense with information-flow labels | Opaque references, integrity/confidentiality labels, reference monitor and quarantined LLM |
+| `camel` | Defense with control/data separation | Quarantined processing and output provenance policies |
 
 These are experimental project implementations. Local tests do not establish
 robustness against real models or full equivalence to the reference implementations
@@ -27,14 +26,14 @@ Paths below are relative to `rscb_questionnaire/`:
 | Variant | Generator | Evaluator | Policies and mechanisms |
 |---|---|---|---|
 | Current baseline | [`services/questionnaire/service.py`](../rscb_questionnaire/services/questionnaire/service.py) | [`services/evaluation/service.py`](../rscb_questionnaire/services/evaluation/service.py) | Common validation and oracle |
-| Baseline R1 | [`variants/baseline_r1/questionnaire.py`](../rscb_questionnaire/variants/baseline_r1/questionnaire.py) | [`variants/baseline_r1/evaluation.py`](../rscb_questionnaire/variants/baseline_r1/evaluation.py) | Historical implementation |
+| Baseline R1 | [`variants/baseline_r1/questionnaire.py`](../rscb_questionnaire/variants/baseline_r1/questionnaire.py) | [`variants/baseline_r1/evaluation.py`](../rscb_questionnaire/variants/baseline_r1/evaluation.py) | R1 implementation |
 | FIDES | [`variants/fides/questionnaire.py`](../rscb_questionnaire/variants/fides/questionnaire.py) | [`variants/fides/evaluation.py`](../rscb_questionnaire/variants/fides/evaluation.py) | [`variants/fides/security/fides.py`](../rscb_questionnaire/variants/fides/security/fides.py) |
 | CaMeL | [`variants/camel/questionnaire.py`](../rscb_questionnaire/variants/camel/questionnaire.py) | [`variants/camel/evaluation.py`](../rscb_questionnaire/variants/camel/evaluation.py) | [`variants/camel/security/`](../rscb_questionnaire/variants/camel/security/) |
 
 Each variant retains its local prompts. Job/command preparation, answer generation,
 schemas, oracle, persistence and provider integration use the shared runtime.
 Selection instantiates both services without branch switching or global class
-replacement. Original FIDES/CaMeL tests accompany the port.
+replacement. FIDES/CaMeL tests cover the mechanisms and their use by both services.
 
 ## Full pipeline including evaluation
 
@@ -71,10 +70,10 @@ Variant services use `recruitsecbench/questionnaire/<variant>/`; shared services
 continue using `recruitsecbench/questionnaire/`. Local prompts work without Langfuse.
 Archive the resolved prompt content and remote versions, when used, for reproduction.
 
-## Original generation battery
+## R1 generation battery
 
-[`rscb-questionnaire-battery`](../rscb_questionnaire/battery.py) ports
-`scripts/run_questionnaire_battery.py`. The [YAML corpus](../configs/questionnaire_battery.yaml)
+[`rscb-questionnaire-battery`](../rscb_questionnaire/battery.py) runs the generation
+campaign. The [YAML corpus](../configs/questionnaire_battery.yaml)
 contains **5 jobs × (15 themes × 5 levels + 1 control) = 380 generations per repetition**:
 375 attacks and 5 controls. The YAML is also bundled in the installed package.
 
@@ -111,18 +110,15 @@ Use a separate campaign to repeat those cases.
 Also archive the current commit, lockfile, full provider configuration and prompts;
 the manifest does not capture every external runtime parameter.
 
-## Fidelity and comparisons
+## Reproducible comparisons
 
-[`DEFENSE_PORTABILITY.json`](../DEFENSE_PORTABILITY.json) records source/destination
-commits and hashes for this extension. [`PORTABILITY.json`](../PORTABILITY.json)
-remains the initial port snapshot. Adaptations include imports, prompt namespaces,
-service selection and provenance. The shared runtime includes later retry,
-OpenRouter and observability improvements, so this is not a byte-for-byte checkout
-of each historical branch.
+Pin the RecruitSecBench commit, lockfile, corpus, resolved prompts and provider
+settings for every campaign. Variants use a shared runtime; changing provider
+behavior, retry settings or prompts requires recording a new configuration.
 
 Compare `baseline_r1`, FIDES and CaMeL using the same corpus, model, parameters and
 repetition count. The full pipeline generates fresh commands and answers with LLMs
 and does not automatically constitute a paired comparison. Keep generation and
 evaluation protocols separate, report coverage/refusals/errors and consult the
-[methodology](methodology.en.md) to interpret the oracle. No historical results,
-credentials or paid runs were transferred or produced by this port.
+[methodology](methodology.en.md) to interpret the oracle. The repository provides code and configuration. Reanalyzing a completed campaign
+requires its saved artifacts; a fresh LLM run can produce different outputs.

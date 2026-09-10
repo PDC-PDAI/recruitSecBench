@@ -2,20 +2,20 @@
 
 🇧🇷 **Português** · [🇺🇸 English](README.en.md) · [RecruitSecBench](../../README.md)
 
-Experimento independente portado do Scenario Emulator: geração de vagas e
+Guia de execução do experimento de segurança de questionários: geração de vagas e
 questionários, comandos adversariais, respostas sintéticas e avaliação da dimensão
-`FORMULARIO`. Nenhum currículo ou PDF é necessário.
+`FORMULARIO`. Veja a [visão do experimento e as figuras do artigo](../../README.md#visão-do-experimento).
 
 ## Baseline, FIDES e CaMeL
 
 As variantes incluem **gerador e avaliador**. Use `run --defense fides` ou
-`run --defense camel`; `baseline` mantém a implementação da portabilidade inicial
-e `baseline_r1` preserva a versão da bateria histórica.
+`run --defense camel`; `baseline` é o padrão do fluxo completo
+e `baseline_r1` é a referência da bateria R1.
 
 A bateria de 380 casos por repetição também está incluída:
 `uv run rscb-questionnaire-battery --defense fides --dry-run`.
 Ela testa somente geração; o comando `run` executa o fluxo com avaliador.
-Veja [origens, implementações e comandos](docs/defenses.md).
+Veja [variantes, implementações e comandos](docs/defenses.md).
 
 ## Instalação e configuração
 
@@ -115,7 +115,7 @@ questionários públicos, submissões, avaliação idempotente e exportação.
 
 Langfuse é opcional. Use um projeto dedicado, configure as três credenciais
 `LANGFUSE_*` e ative `LANGFUSE_TRACING_ENABLED=true`. Os prompts usam o namespace
-`recruitsecbench/questionnaire/`, separado de `front-a/` da origem.
+`recruitsecbench/questionnaire/`, com namespace próprio para cada defesa.
 
 ```bash
 uv run rscb-questionnaire sync-prompts
@@ -136,9 +136,9 @@ uv build
 
 | Guia | Português | English |
 |---|---|---|
-| FIDES, CaMeL e bateria histórica | [Defesas](docs/defenses.md) | [Defenses](docs/defenses.en.md) |
+| FIDES, CaMeL e bateria R1 | [Defesas](docs/defenses.md) | [Defenses](docs/defenses.en.md) |
 | Método, oráculos e reprodução | [Método](docs/methodology.md) | [Methodology](docs/methodology.en.md) |
-| Portabilidade e arquitetura | [Desenvolvimento](docs/portability.md) | [Development](docs/portability.en.md) |
+| Arquitetura e desenvolvimento | [Desenvolvimento](docs/development.md) | [Development](docs/development.en.md) |
 | API e submissões | [API](docs/api.md) | [API](docs/api.en.md) |
 
 Os testes usam modelos substitutos e tracing desabilitado. Eles verificam a

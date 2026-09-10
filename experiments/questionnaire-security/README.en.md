@@ -2,20 +2,20 @@
 
 [🇧🇷 Português](README.md) · 🇺🇸 **English** · [RecruitSecBench](../../README.en.md)
 
-An independent experiment ported from Scenario Emulator: job and questionnaire
-generation, adversarial commands, synthetic answers, and `FORMULARIO` evaluation.
-No CV or PDF is required.
+Execution guide for the questionnaire security experiment: job and questionnaire
+generation, adversarial commands, synthetic answers and `FORMULARIO` evaluation.
+See the [experiment overview and paper figures](../../README.en.md#experiment-overview).
 
 ## Baseline, FIDES and CaMeL
 
 Variants include **both generator and evaluator**. Use `run --defense fides` or
-`run --defense camel`; `baseline` keeps the initial port implementation and
-`baseline_r1` retains the historical battery version.
+`run --defense camel`; `baseline` is the default for the full pipeline and
+`baseline_r1` is the reference for the R1 battery.
 
 The 380-case-per-repetition battery is also included:
 `uv run rscb-questionnaire-battery --defense fides --dry-run`.
 It tests generation only; `run` executes the pipeline including evaluation.
-See [origins, implementations and commands](docs/defenses.en.md).
+See [variants, implementations and commands](docs/defenses.en.md).
 
 ## Installation and configuration
 
@@ -115,7 +115,7 @@ public questionnaires, submissions, idempotent evaluation, and export.
 
 Langfuse is optional. Use a dedicated project, configure its three `LANGFUSE_*`
 credentials, and set `LANGFUSE_TRACING_ENABLED=true`. Prompt names use
-`recruitsecbench/questionnaire/`, separate from the original `front-a/` namespace.
+`recruitsecbench/questionnaire/`, with a namespace for each defense.
 
 ```bash
 uv run rscb-questionnaire sync-prompts
@@ -136,9 +136,9 @@ uv build
 
 | Guide | Português | English |
 |---|---|---|
-| FIDES, CaMeL and historical battery | [Defesas](docs/defenses.md) | [Defenses](docs/defenses.en.md) |
+| FIDES, CaMeL and R1 battery | [Defesas](docs/defenses.md) | [Defenses](docs/defenses.en.md) |
 | Method, oracles, and reproduction | [Método](docs/methodology.md) | [Methodology](docs/methodology.en.md) |
-| Portability and architecture | [Desenvolvimento](docs/portability.md) | [Development](docs/portability.en.md) |
+| Architecture and development | [Desenvolvimento](docs/development.md) | [Development](docs/development.en.md) |
 | API and submissions | [API](docs/api.md) | [API](docs/api.en.md) |
 
 Tests use substitute models and disable tracing. They verify implementation;

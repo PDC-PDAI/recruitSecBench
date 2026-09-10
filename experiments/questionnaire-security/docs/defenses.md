@@ -1,20 +1,19 @@
-# FIDES, CaMeL e bateria histórica
+# Baselines, FIDES, CaMeL e bateria R1
 
 🇧🇷 **Português** · [🇺🇸 English](defenses.en.md) · [Início](../README.md)
 
-## Por que fazem parte
+## Variantes experimentais
 
-FIDES e CaMeL são as variantes de defesa implementadas neste projeto para comparar
-como o gerador de questionários e o avaliador de respostas lidam com conteúdo
-adversarial. A primeira portabilidade trouxe apenas a branch de trabalho vigente;
-estas implementações estavam em outras branches do Scenario Emulator.
+FIDES e CaMeL implementam mecanismos de defesa para comparar como o gerador de
+questionários e o avaliador de respostas lidam com conteúdo adversarial. Cada
+variante seleciona um gerador e um avaliador sob o mesmo contrato de cenário.
 
-| `--defense` | Origem no Scenario Emulator | Gerador e avaliador |
+| `--defense` | Papel no experimento | Gerador e avaliador |
 |---|---|---|
-| `baseline` | `8fd93c0` — portabilidade inicial | Implementação corrente na separação dos repos |
-| `baseline_r1` | `bateria-testes-r1` · `acd083a` | Baseline histórico da bateria, preservado como variante própria |
-| `fides` | `feat/fides` · `3aae97d` | Referências opacas, rótulos de integridade/confidencialidade, monitor de permissões e LLM em quarentena |
-| `camel` | `feat/camel` · `804bece` | Separação entre controle e dados, processamento em quarentena e políticas de proveniência nas saídas |
+| `baseline` | Baseline padrão do fluxo completo | Serviços padrão de geração e avaliação |
+| `baseline_r1` | Referência da bateria R1 | Serviços de geração e avaliação da versão R1 |
+| `fides` | Defesa com rótulos de fluxo de informação | Referências opacas, rótulos de integridade/confidencialidade, monitor de permissões e LLM em quarentena |
+| `camel` | Defesa com separação entre controle e dados | Processamento em quarentena e políticas de proveniência nas saídas |
 
 São implementações experimentais do projeto. Os testes verificam seu comportamento
 local; não demonstram eficácia contra modelos reais nem equivalência integral às
@@ -27,14 +26,14 @@ Todos os caminhos abaixo são relativos a `rscb_questionnaire/`:
 | Variante | Gerador | Avaliador | Políticas e mecanismos |
 |---|---|---|---|
 | Baseline atual | [`services/questionnaire/service.py`](../rscb_questionnaire/services/questionnaire/service.py) | [`services/evaluation/service.py`](../rscb_questionnaire/services/evaluation/service.py) | Validações e oráculo comuns |
-| Baseline R1 | [`variants/baseline_r1/questionnaire.py`](../rscb_questionnaire/variants/baseline_r1/questionnaire.py) | [`variants/baseline_r1/evaluation.py`](../rscb_questionnaire/variants/baseline_r1/evaluation.py) | Implementação histórica |
+| Baseline R1 | [`variants/baseline_r1/questionnaire.py`](../rscb_questionnaire/variants/baseline_r1/questionnaire.py) | [`variants/baseline_r1/evaluation.py`](../rscb_questionnaire/variants/baseline_r1/evaluation.py) | Implementação R1 |
 | FIDES | [`variants/fides/questionnaire.py`](../rscb_questionnaire/variants/fides/questionnaire.py) | [`variants/fides/evaluation.py`](../rscb_questionnaire/variants/fides/evaluation.py) | [`variants/fides/security/fides.py`](../rscb_questionnaire/variants/fides/security/fides.py) |
 | CaMeL | [`variants/camel/questionnaire.py`](../rscb_questionnaire/variants/camel/questionnaire.py) | [`variants/camel/evaluation.py`](../rscb_questionnaire/variants/camel/evaluation.py) | [`variants/camel/security/`](../rscb_questionnaire/variants/camel/security/) |
 
 Cada variante mantém seus prompts locais. A preparação de vagas/comandos, geração
 de respostas, schemas, oráculo, persistência e integração com providers usam o
 runtime comum. A seleção instancia os dois serviços, sem trocar branches ou
-modificar classes globais. Testes de FIDES/CaMeL foram portados junto do código.
+modificar classes globais. Os testes de FIDES/CaMeL cobrem os mecanismos e seu uso pelos dois serviços.
 
 ## Fluxo completo com avaliador
 
@@ -72,10 +71,10 @@ serviços comuns continuam em `recruitsecbench/questionnaire/`. Sem Langfuse,
 os prompts locais são usados. Para reprodução, arquive o conteúdo efetivamente
 resolvido e as versões remotas, quando houver.
 
-## Bateria original de geração
+## Bateria R1 de geração
 
-O comando [`rscb-questionnaire-battery`](../rscb_questionnaire/battery.py) porta
-`scripts/run_questionnaire_battery.py`. O [corpus YAML](../configs/questionnaire_battery.yaml)
+O comando [`rscb-questionnaire-battery`](../rscb_questionnaire/battery.py) executa
+a campanha de geração. O [corpus YAML](../configs/questionnaire_battery.yaml)
 contém **5 vagas × (15 temas × 5 níveis + 1 controle) = 380 gerações por repetição**:
 375 ataques e 5 controles. O YAML também é incluído no pacote instalado.
 
@@ -112,18 +111,15 @@ concluídos na retomada. Use outra campanha para repetir esses casos. Arquive ta
 configuração completa do provider e prompts; o manifesto não captura todos os
 parâmetros externos de execução.
 
-## Fidelidade e comparação
+## Comparação reproduzível
 
-[`DEFENSE_PORTABILITY.json`](../DEFENSE_PORTABILITY.json) registra commits e hashes
-de origem/destino desta extensão. [`PORTABILITY.json`](../PORTABILITY.json)
-continua como fotografia da portabilidade inicial. O port adapta imports,
-namespaces de prompts, seleção de serviços e proveniência. O runtime compartilhado
-inclui melhorias posteriores de retries, OpenRouter e observabilidade; portanto,
-não é um checkout byte a byte de cada branch histórica.
+Fixe o commit do RecruitSecBench, lockfile, corpus, prompts resolvidos e
+configuração do provider em cada campanha. As variantes usam runtime comum;
+alterações de provider, retries ou prompts exigem registrar uma nova configuração.
 
 Compare `baseline_r1`, FIDES e CaMeL com o mesmo corpus, modelo, parâmetros e número
 de repetições. O fluxo completo gera novos comandos e respostas por LLM e não
 constitui automaticamente uma comparação pareada. Separe protocolos de geração
 e avaliação, reporte cobertura/recusas/erros e use o [método](methodology.md) para
-interpretar o oráculo. Nenhum resultado histórico, credencial ou execução paga foi
-transferido ou produzido por esta portabilidade.
+interpretar o oráculo. O repositório fornece código e configurações. Reanalisar uma campanha concluída
+exige seus artefatos salvos; uma nova execução com LLM pode produzir outras saídas.

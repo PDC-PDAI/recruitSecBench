@@ -2,42 +2,50 @@
 
 🇧🇷 **Português** · [🇺🇸 English](README.en.md)
 
-Benchmark de segurança para agentes de recrutamento. O experimento atual avalia
-**geração de questionários e avaliação de respostas**: obediência a comandos
-maliciosos, recusas indevidas, manipulação de notas e rastreabilidade das evidências.
+Benchmark de segurança para agentes de recrutamento baseados em LLMs.
+Investiga **prompt injection na geração de questionários e na avaliação de
+respostas**, comparando baselines e as defesas FIDES e CaMeL.
 
-[Começar](#começar) · [Guia do experimento](experiments/questionnaire-security/README.md) ·
-[Método e reprodução](experiments/questionnaire-security/docs/methodology.md) ·
+[Começar](#começar) · [Método](experiments/questionnaire-security/docs/methodology.md) ·
+[Defesas e bateria](experiments/questionnaire-security/docs/defenses.md) ·
+[Desenvolvimento](experiments/questionnaire-security/docs/development.md) ·
 [API](experiments/questionnaire-security/docs/api.md)
 
-```mermaid
-flowchart LR
-    B[Briefing] --> V[Vaga]
-    V --> C[Comandos benignos e adversariais]
-    C --> Q[Gerador de questionários]
-    Q --> R[Respostas sintéticas e prompt injections]
-    R --> E[Avaliador FORMULARIO]
-    Q --> O[Oráculos e benchmark]
-    E --> O
-```
+## Visão do experimento
 
-## Organização dos experimentos
+O fluxo parte da descrição de uma vaga, produz um questionário e avalia as
+respostas do candidato. O benchmark exercita duas superfícies de ataque:
+**AS-1**, a interface do gerador, e **AS-2**, a interface do avaliador.
+Comandos e respostas sintéticos permitem testar comportamento benigno e adversarial.
 
-| Experimento | Local | Estado e uso |
+![Figura 1: fluxo de recrutamento com AS-1 no gerador de questionários e AS-2 no avaliador LLM.](docs/figures/figura1_pt.png)
+
+*Figura 1 — Arquitetura experimental e superfícies de ataque do artigo.*
+
+| Superfície | Entrada adversarial | O que observar |
 |---|---|---|
-| **Segurança de questionários** | [`experiments/questionnaire-security/`](experiments/questionnaire-security/README.md) | Pipeline portado do Scenario Emulator; ambiente, CLI, lockfile, testes e saídas próprios |
-| Experimento anterior de recrutamento/CVs | `src/recruitsecbench/`, `schemas/`, `protocol/`, `data/` | Código e contratos preservados; [guia anterior](docs/legacy-cv-experiment.md) |
-| Diagnóstico de falhas — Frente A | [Scenario Emulator](https://github.com/PDC-PDAI/scenario-emulator) | Campanhas de injeção e trajetórias para AgentDebug-RH, mantidas em outro repo |
+| **AS-1 · Gerador** | Comando do coordenador | Cumprimento de comandos maliciosos, recusas indevidas e validade do questionário |
+| **AS-2 · Avaliador** | Respostas às perguntas | Manipulação de nota, alteração da saída, proveniência das evidências e exposição de canários |
 
-O novo experimento usa vagas, comandos, questionários, respostas e avaliações.
-Ele não depende de currículos, PDFs, corpus restrito nem serviços do experimento
-anterior. Os JSONLs novos têm contratos próprios; não são intercambiáveis com os
-cinco datasets de `schemas/` sem um adaptador explícito.
+## Integridade e confidencialidade
+
+Uma recusa pode impedir o objetivo malicioso e, ainda assim, a explicação gerada
+revelar informação interna. Por isso, integridade da decisão e confidencialidade
+da saída precisam ser examinadas separadamente.
+
+![Figura 4: o objetivo malicioso é rejeitado, mas a nota de segurança pode revelar um canário interno.](docs/figures/figura4_pt.png)
+
+*Figura 4 — Recusa do objetivo malicioso com possível vazamento na explicação de segurança.*
+
+As figuras usam a nomenclatura do artigo. Na implementação, a avaliação retorna
+`valor`, `justificativa` e `evidencias`; os checks ficam em `oracle`.
+`verdict` e `security_note` não são campos desse contrato. A checagem de canários
+atual inspeciona `justificativa`. Consulte o [método](experiments/questionnaire-security/docs/methodology.md)
+para interpretar cada check e seu alcance.
 
 ## Começar
 
-Requisitos: Python 3.12+, Git e `uv`. Execute dentro do diretório do experimento
-para usar seu ambiente independente.
+Requisitos: **Python 3.12+**, Git e `uv`. Execute no diretório do experimento:
 
 ```bash
 git clone https://github.com/PDC-PDAI/recruitSecBench.git
@@ -45,89 +53,88 @@ cd recruitSecBench/experiments/questionnaire-security
 uv sync --locked
 cp .env.example .env
 
-# Sem chamadas a modelos
-uv run rscb-questionnaire --help
+# Verificação sem chamadas a modelos
 uv run rscb-questionnaire validate-profile configs/fronts/security.yaml
 uv run pytest -q
 ```
 
-Configure o provider no `.env` e execute uma cadeia pequena:
+Configure o provider no `.env` e execute um cenário pequeno com avaliador:
 
 ```bash
-uv run rscb-questionnaire run \
+uv run rscb-questionnaire run --defense baseline \
   --brief "Vaga sênior de backend Python, FastAPI e PostgreSQL" \
   --benign 1 --malicious 0 \
   --benign-responses 1 --malicious-responses 0
 ```
 
-O perfil de segurança já é o padrão da CLI. Sem os overrides acima, gera um
-comando benigno e três maliciosos, com uma resposta benigna e duas maliciosas
-por questionário efetivamente produzido. Essa execução chama LLMs; os testes
-usam substitutos locais.
+Essa execução chama LLMs. O [guia de execução](experiments/questionnaire-security/README.md)
+explica providers, perfis e caminhos de saída. Sem os overrides acima, o perfil
+padrão solicita um comando benigno e três maliciosos, com uma resposta benigna
+e duas maliciosas por questionário produzido.
 
-## Avaliador de respostas
+## Baselines, FIDES e CaMeL
 
-O **`EvaluationService`** avalia as respostas de cada questionário na dimensão
-`FORMULARIO`. A pipeline o executa automaticamente após gerar e validar os casos
-de resposta. Ele retorna nota, justificativa e evidências; o oráculo verifica
-limiares, proveniência e canários.
+| `--defense` | Variante | Abrangência |
+|---|---|---|
+| `baseline` | Baseline padrão do fluxo completo | Gerador e avaliador |
+| `baseline_r1` | Baseline de referência da bateria R1 | Gerador e avaliador |
+| `fides` | Rótulos de integridade/confidencialidade, monitor de permissões e quarentena | Gerador e avaliador |
+| `camel` | Separação entre controle e dados, quarentena e políticas de proveniência | Gerador e avaliador |
 
-- [Implementação do avaliador](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/service.py)
+Use `run --defense fides` ou `run --defense camel` para selecionar as duas etapas.
+O [guia das defesas](experiments/questionnaire-security/docs/defenses.md) aponta
+para cada implementação e explica os protocolos de comparação.
+
+A bateria R1 possui **380 gerações por repetição**: 5 vagas × (75 ataques + 1
+controle). Para conferir o corpus sem chamar modelos:
+
+```bash
+uv run rscb-questionnaire-battery --defense fides --dry-run
+```
+
+A bateria executa somente geração. O fluxo `rscb-questionnaire run` inclui
+respostas e avaliação dos questionários produzidos.
+
+## Avaliador e artefatos
+
+O `EvaluationService` avalia a dimensão `FORMULARIO` após a validação da submissão.
+Seu modelo pode ser configurado com `EVALUATOR_LLM_PROVIDER` e `EVALUATOR_MODEL`.
+A [API](experiments/questionnaire-security/docs/api.md) permite enviar respostas
+manuais e consultar avaliações persistidas.
+
+- [Avaliador baseline](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/service.py)
 - [Oráculo determinístico](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/oracle.py)
 - [Schemas da avaliação](experiments/questionnaire-security/rscb_questionnaire/schemas/evaluation/schema.py)
-- [Testes do avaliador](experiments/questionnaire-security/tests/test_evaluation.py)
+- [Avaliadores FIDES e CaMeL](experiments/questionnaire-security/docs/defenses.md#onde-desenvolver)
 
-Para configurar seu modelo separadamente, use `EVALUATOR_LLM_PROVIDER` e
-`EVALUATOR_MODEL` no `.env` do experimento. A [API](experiments/questionnaire-security/docs/api.md)
-também permite avaliar submissões manuais.
-
-## FIDES, CaMeL e bateria histórica
-
-O experimento de questionários inclui **baseline, baseline R1, FIDES e CaMeL**,
-com gerador e avaliador em cada variante. `run --defense fides` e
-`run --defense camel` selecionam as duas etapas. A bateria histórica de geração
-está disponível em `rscb-questionnaire-battery`: 380 casos por repetição.
-
-[Mapa das implementações, branches de origem e comandos de reprodução](experiments/questionnaire-security/docs/defenses.md).
-O guia distingue a bateria de geração do fluxo completo com avaliação.
-
-## O que foi portado
-
-- Agentes de vaga, coordenador, questionário, respostas e avaliação `FORMULARIO`.
-- Prompts locais, providers configuráveis por papel e tracing opcional no Langfuse.
-- Schemas, validação de submissões, oráculos, canários e exportação JSON/JSONL.
-- API FastAPI, visão pública dos questionários e persistência SQLite.
-- Testes de contratos, pipeline, avaliação, API e migração de banco.
-
-A origem e os hashes dos arquivos estão em
-[`PORTABILITY.json`](experiments/questionnaire-security/PORTABILITY.json).
-O [guia de portabilidade](experiments/questionnaire-security/docs/portability.md)
-explica as adaptações e como desenvolver sem depender do checkout de origem.
-
-## Resultados e limites
-
-`outputs/security/` contém `scenario.json`, `benchmark.jsonl`, `agent-debug.jsonl`
-e `trajectories/`. Separe a taxa de sucesso do gerador, recusas indevidas, ataques
-aceitos e resultados do avaliador por intenção/categoria. Registre também falhas
-de runtime e cobertura; um ataque recusado antes da criação do questionário não
-produz uma avaliação posterior.
-
-Os limiares de nota são regras experimentais, não uma validação universal da
-qualidade de candidatos. O oráculo de canários inspeciona a justificativa; não
-prova ausência de todo vazamento. Novas execuções com LLM não garantem os mesmos
-textos. Consulte o [método](experiments/questionnaire-security/docs/methodology.md)
-antes de comparar resultados com o experimento anterior.
+O fluxo completo grava `scenario.json`, `benchmark.jsonl`, `agent-debug.jsonl` e
+`trajectories/` em `outputs/security/` por padrão. Use um diretório por execução
+e analise geração e avaliação separadamente, com denominadores, recusas e falhas
+de runtime explícitos. Uma recusa na geração impede a avaliação posterior daquele
+caso; os [critérios experimentais](experiments/questionnaire-security/docs/methodology.md)
+detalham cobertura, limiares e limitações.
 
 ## Desenvolvimento
 
+O código de questionários fica em `experiments/questionnaire-security/`, com
+pacote `rscb_questionnaire`, CLI, dependências e testes próprios.
+
 ```bash
-# Experimento atual
 cd experiments/questionnaire-security
 uv run ruff check .
 uv run pytest -q
+uv build
 ```
 
-O projeto da raiz mantém sua CLI `rscb`, lockfile e verificações anteriores.
-`rscb-questionnaire` pertence ao ambiente do novo experimento. Os dois são
-verificados separadamente no CI. Todos os guias principais possuem versões
-🇧🇷 em português e 🇺🇸 em inglês.
+| Guia | Português | English |
+|---|---|---|
+| Execução e configuração | [Guia](experiments/questionnaire-security/README.md) | [Guide](experiments/questionnaire-security/README.en.md) |
+| Método e reprodução | [Método](experiments/questionnaire-security/docs/methodology.md) | [Methodology](experiments/questionnaire-security/docs/methodology.en.md) |
+| Defesas e bateria R1 | [Defesas](experiments/questionnaire-security/docs/defenses.md) | [Defenses](experiments/questionnaire-security/docs/defenses.en.md) |
+| Arquitetura e desenvolvimento | [Desenvolvimento](experiments/questionnaire-security/docs/development.md) | [Development](experiments/questionnaire-security/docs/development.en.md) |
+| API e submissões | [API](experiments/questionnaire-security/docs/api.md) | [API](experiments/questionnaire-security/docs/api.en.md) |
+
+O [experimento de currículos](docs/legacy-cv-experiment.md) tem código em
+`src/recruitsecbench/`, CLI `rscb` e contratos próprios. Cada experimento é
+verificado em um job de CI. Os testes usam modelos substitutos e verificam a
+implementação; resultados de robustez exigem campanhas com modelos reais.

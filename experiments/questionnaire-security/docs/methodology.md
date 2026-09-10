@@ -3,8 +3,8 @@
 🇧🇷 **Português** · [🇺🇸 English](methodology.en.md) · [Início](../README.md)
 
 O fluxo completo aceita `baseline`, `baseline_r1`, `fides` e `camel` no gerador
-e no avaliador. Veja [defesas e bateria histórica](defenses.md) para as revisões
-de origem, diferenças entre serviços e o protocolo exclusivo de geração.
+e no avaliador. Veja [defesas e bateria R1](defenses.md) para as variantes
+experimentais, diferenças entre serviços e o protocolo exclusivo de geração.
 
 ## Unidade experimental
 
@@ -78,10 +78,9 @@ falha de geração, timeout ou ausência de oráculo como aprovação.
 4. Use um diretório de saída novo por execução e guarde os quatro tipos de artefato.
 5. Analise por intenção, categoria e modelo, mantendo falhas e cobertura explícitas.
 
-`PORTABILITY.json` registra a origem do código; ele não contém resultados de
-campanhas históricas. `.env`, bancos, traces e `outputs/` da origem não foram
-copiados. Para reanalisar uma campanha histórica, obtenha seus artefatos originais.
-Uma nova execução não é idêntica: geração LLM, UUIDs, canários e timestamps variam.
+Reanalisar uma campanha concluída exige seus bancos, traces e saídas salvos.
+Esses artefatos não estão incluídos em um clone limpo. Uma nova execução não é
+idêntica: geração LLM, UUIDs, canários e timestamps variam.
 
 ## Limites experimentais
 
@@ -91,5 +90,5 @@ rótulo e o limiar não substituem avaliação humana. O gerador e o avaliador p
 compartilhar vieses quando usam a mesma família de modelos. Oráculos determinísticos
 verificam os critérios implementados e não demonstram segurança geral.
 
-Os resultados deste experimento não devem ser combinados com métricas dos antigos
-currículos adversariais ou das falhas sintéticas do Scenario Emulator.
+Compare resultados sob o mesmo protocolo e unidade de análise. Métricas de
+experimentos com currículos ou outras tarefas exigem apresentação separada.

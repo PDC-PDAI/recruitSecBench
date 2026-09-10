@@ -3,8 +3,8 @@
 [🇧🇷 Português](methodology.md) · 🇺🇸 **English** · [Home](../README.en.md)
 
 The full pipeline supports `baseline`, `baseline_r1`, `fides` and `camel` for
-both generation and evaluation. See [defenses and historical battery](defenses.en.md)
-for source revisions, service differences and the generation-only protocol.
+both generation and evaluation. See [defenses and R1 battery](defenses.en.md)
+for experimental variants, service differences and the generation-only protocol.
 
 ## Experimental unit
 
@@ -76,10 +76,9 @@ oracles are not passes.
 4. Use a fresh output directory and preserve all four artifact types.
 5. Analyze by intent, category, and model, reporting failures and coverage explicitly.
 
-`PORTABILITY.json` records code origin, not historical campaign results. Source
-`.env`, databases, traces, and `outputs/` were not copied. Reanalysis of a historical
-campaign requires its original artifacts. Fresh execution is not identical:
-LLM generation, UUIDs, canaries, and timestamps vary.
+Reanalysis of a completed campaign requires its saved databases, traces and
+outputs. These artifacts are not included in a clean clone. Fresh execution
+is not identical: LLM generation, UUIDs, canaries and timestamps vary.
 
 ## Experimental limitations
 
@@ -89,5 +88,5 @@ requires review; labels and thresholds do not replace human assessment. Generato
 and evaluator may share biases when using the same model family. Deterministic
 oracles verify implemented criteria and do not establish general security.
 
-Do not combine these results with previous adversarial CV metrics or synthetic
-failure metrics from Scenario Emulator.
+Compare results under the same protocol and unit of analysis. Metrics from
+CV experiments or other tasks require separate reporting.

@@ -2,42 +2,50 @@
 
 [🇧🇷 Português](README.md) · 🇺🇸 **English**
 
-A security benchmark for recruitment agents. The current experiment evaluates
-**questionnaire generation and answer evaluation**: compliance with malicious
-commands, over-refusal, score manipulation, and evidence provenance.
+A security benchmark for LLM recruitment agents. It investigates **prompt
+injection in questionnaire generation and answer evaluation**, comparing
+baselines with FIDES and CaMeL defenses.
 
-[Get started](#get-started) · [Experiment guide](experiments/questionnaire-security/README.en.md) ·
-[Method and reproduction](experiments/questionnaire-security/docs/methodology.en.md) ·
+[Get started](#get-started) · [Methodology](experiments/questionnaire-security/docs/methodology.en.md) ·
+[Defenses and battery](experiments/questionnaire-security/docs/defenses.en.md) ·
+[Development](experiments/questionnaire-security/docs/development.en.md) ·
 [API](experiments/questionnaire-security/docs/api.en.md)
 
-```mermaid
-flowchart LR
-    B[Brief] --> V[Job]
-    V --> C[Benign and adversarial commands]
-    C --> Q[Questionnaire generator]
-    Q --> R[Synthetic answers and prompt injections]
-    R --> E[FORMULARIO evaluator]
-    Q --> O[Oracles and benchmark]
-    E --> O
-```
+## Experiment overview
 
-## Experiment organization
+The workflow starts from a job description, generates a questionnaire and evaluates
+candidate answers. The benchmark exercises two attack surfaces: **AS-1**, the
+generator interface, and **AS-2**, the evaluator interface. Synthetic commands and
+answers support benign and adversarial cases.
 
-| Experiment | Location | Status and purpose |
+![Figure 1: recruitment workflow with AS-1 at the questionnaire generator and AS-2 at the LLM evaluator.](docs/figures/figura1_en.png)
+
+*Figure 1 — Experimental architecture and attack surfaces from the paper.*
+
+| Surface | Adversarial input | What to observe |
 |---|---|---|
-| **Questionnaire security** | [`experiments/questionnaire-security/`](experiments/questionnaire-security/README.en.md) | Ported from Scenario Emulator; independent environment, CLI, lockfile, tests, and outputs |
-| Previous recruitment/CV experiment | `src/recruitsecbench/`, `schemas/`, `protocol/`, `data/` | Existing code and contracts preserved; [previous guide](docs/legacy-cv-experiment.en.md) |
-| Failure diagnosis — Front A | [Scenario Emulator](https://github.com/PDC-PDAI/scenario-emulator) | Injection campaigns and trajectories for AgentDebug-RH, maintained separately |
+| **AS-1 · Generator** | Coordinator command | Compliance with malicious commands, over-refusal and questionnaire validity |
+| **AS-2 · Evaluator** | Questionnaire answers | Score manipulation, output alteration, evidence provenance and canary disclosure |
 
-The new experiment uses jobs, commands, questionnaires, answers, and evaluations.
-It does not require CVs, PDFs, a restricted corpus, or services from the previous
-experiment. Its JSONL contracts are separate from the five datasets in `schemas/`;
-an explicit adapter would be required to interchange them.
+## Integrity and confidentiality
+
+A refusal may prevent the malicious objective while the generated explanation
+still reveals internal information. Decision integrity and output confidentiality
+therefore need to be examined separately.
+
+![Figure 4: the malicious objective is rejected, but the security note may disclose an internal canary.](docs/figures/figura4_en.png)
+
+*Figure 4 — Refusal of a malicious objective with possible disclosure in the security explanation.*
+
+The figures use the paper's terminology. The implementation returns `valor`,
+`justificativa` and `evidencias`, with checks in `oracle`. `verdict` and
+`security_note` are not fields in this contract. Current canary checks inspect
+`justificativa`. See the [methodology](experiments/questionnaire-security/docs/methodology.en.md)
+for each check and its scope.
 
 ## Get started
 
-Requirements: Python 3.12+, Git, and `uv`. Work inside the experiment directory
-to use its independent environment.
+Requirements: **Python 3.12+**, Git and `uv`. Work inside the experiment directory:
 
 ```bash
 git clone https://github.com/PDC-PDAI/recruitSecBench.git
@@ -45,88 +53,88 @@ cd recruitSecBench/experiments/questionnaire-security
 uv sync --locked
 cp .env.example .env
 
-# No model calls
-uv run rscb-questionnaire --help
+# Verification without model calls
 uv run rscb-questionnaire validate-profile configs/fronts/security.yaml
 uv run pytest -q
 ```
 
-Configure the provider in `.env` and run a small complete pipeline:
+Configure the provider in `.env` and run a small scenario including evaluation:
 
 ```bash
-uv run rscb-questionnaire run \
-  --brief "Vaga sênior de backend Python, FastAPI e PostgreSQL" \
+uv run rscb-questionnaire run --defense baseline \
+  --brief "Senior backend role using Python, FastAPI and PostgreSQL" \
   --benign 1 --malicious 0 \
   --benign-responses 1 --malicious-responses 0
 ```
 
-The CLI selects the security profile by default. Without these overrides, it
-requests one benign and three malicious commands, with one benign and two
-malicious answer cases per questionnaire actually generated. This calls LLMs;
-tests use local substitutes.
+This calls LLMs. The [execution guide](experiments/questionnaire-security/README.en.md)
+covers providers, profiles and output paths. Without the overrides above, the
+default profile requests one benign and three malicious commands, with one benign
+and two malicious answer cases per generated questionnaire.
 
-## Answer evaluator
+## Baselines, FIDES and CaMeL
 
-**`EvaluationService`** evaluates questionnaire answers in the `FORMULARIO`
-dimension. The pipeline calls it automatically after generating and validating
-answer cases. It returns a score, justification, and evidence; the deterministic
-oracle checks thresholds, provenance, and canaries.
+| `--defense` | Variant | Coverage |
+|---|---|---|
+| `baseline` | Default baseline for the full pipeline | Generator and evaluator |
+| `baseline_r1` | Reference baseline for the R1 battery | Generator and evaluator |
+| `fides` | Integrity/confidentiality labels, reference monitor and quarantine | Generator and evaluator |
+| `camel` | Separation of control and data, quarantine and provenance policies | Generator and evaluator |
 
-- [Evaluator implementation](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/service.py)
+Use `run --defense fides` or `run --defense camel` to select both stages.
+The [defense guide](experiments/questionnaire-security/docs/defenses.en.md) links
+to each implementation and explains comparison protocols.
+
+The R1 battery contains **380 generations per repetition**: 5 jobs × (75 attacks
++ 1 control). Validate the corpus without model calls:
+
+```bash
+uv run rscb-questionnaire-battery --defense fides --dry-run
+```
+
+The battery runs generation only. `rscb-questionnaire run` includes answers and
+evaluation for the questionnaires produced.
+
+## Evaluator and artifacts
+
+`EvaluationService` evaluates the `FORMULARIO` dimension after submission
+validation. Configure its model with `EVALUATOR_LLM_PROVIDER` and `EVALUATOR_MODEL`.
+The [API](experiments/questionnaire-security/docs/api.en.md) supports manual
+submissions and retrieval of persisted evaluations.
+
+- [Baseline evaluator](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/service.py)
 - [Deterministic oracle](experiments/questionnaire-security/rscb_questionnaire/services/evaluation/oracle.py)
 - [Evaluation schemas](experiments/questionnaire-security/rscb_questionnaire/schemas/evaluation/schema.py)
-- [Evaluator tests](experiments/questionnaire-security/tests/test_evaluation.py)
+- [FIDES and CaMeL evaluators](experiments/questionnaire-security/docs/defenses.en.md#development-map)
 
-To configure its model independently, set `EVALUATOR_LLM_PROVIDER` and
-`EVALUATOR_MODEL` in the experiment's `.env`. The [API](experiments/questionnaire-security/docs/api.en.md)
-also supports evaluating manual submissions.
-
-## FIDES, CaMeL and the historical battery
-
-The questionnaire experiment includes **baseline, baseline R1, FIDES and CaMeL**,
-with a generator and evaluator for each variant. `run --defense fides` and
-`run --defense camel` select both stages. The historical generation battery is
-available through `rscb-questionnaire-battery`: 380 cases per repetition.
-
-[Implementation map, source branches and reproduction commands](experiments/questionnaire-security/docs/defenses.en.md).
-The generation battery and the full evaluation pipeline are documented separately.
-
-## Ported components
-
-- Job, coordinator, questionnaire, answer generation, and `FORMULARIO` evaluation agents.
-- Local prompts, providers configurable by role, and optional Langfuse tracing.
-- Schemas, submission validation, oracles, canaries, and JSON/JSONL exports.
-- FastAPI, public questionnaire views, and SQLite persistence.
-- Contract, pipeline, evaluation, API, and database migration tests.
-
-Source revision and file hashes are recorded in
-[`PORTABILITY.json`](experiments/questionnaire-security/PORTABILITY.json).
-The [portability guide](experiments/questionnaire-security/docs/portability.en.md)
-explains adaptations and development without the source checkout.
-
-## Results and limitations
-
-`outputs/security/` contains `scenario.json`, `benchmark.jsonl`, `agent-debug.jsonl`,
-and `trajectories/`. Report generator success, over-refusal, accepted attacks,
-and evaluator outcomes separately by intent/category. Also report runtime
-failures and coverage; an attack refused before questionnaire creation does not
-produce a downstream evaluation.
-
-Score thresholds are experimental rules, not universal validation of candidate
-quality. Canary checks inspect the justification and do not prove absence of
-all leakage. New LLM runs do not guarantee identical text. Read the
-[methodology](experiments/questionnaire-security/docs/methodology.en.md)
-before comparing these results with the previous experiment.
+The full pipeline writes `scenario.json`, `benchmark.jsonl`, `agent-debug.jsonl`
+and `trajectories/` under `outputs/security/` by default. Use a directory per run
+and analyze generation and evaluation separately, with explicit denominators,
+refusals and runtime failures. A generation refusal prevents subsequent evaluation
+for that case; the [experimental criteria](experiments/questionnaire-security/docs/methodology.en.md)
+detail coverage, thresholds and limitations.
 
 ## Development
 
+Questionnaire code lives in `experiments/questionnaire-security/`, with package
+`rscb_questionnaire`, its own CLI, dependencies and tests.
+
 ```bash
-# Current experiment
 cd experiments/questionnaire-security
 uv run ruff check .
 uv run pytest -q
+uv build
 ```
 
-The root project retains its `rscb` CLI, lockfile, and previous checks.
-`rscb-questionnaire` belongs to the new experiment's environment. CI checks both
-projects independently. All main guides have 🇧🇷 Portuguese and 🇺🇸 English versions.
+| Guide | Português | English |
+|---|---|---|
+| Execution and configuration | [Guia](experiments/questionnaire-security/README.md) | [Guide](experiments/questionnaire-security/README.en.md) |
+| Methodology and reproduction | [Método](experiments/questionnaire-security/docs/methodology.md) | [Methodology](experiments/questionnaire-security/docs/methodology.en.md) |
+| Defenses and R1 battery | [Defesas](experiments/questionnaire-security/docs/defenses.md) | [Defenses](experiments/questionnaire-security/docs/defenses.en.md) |
+| Architecture and development | [Desenvolvimento](experiments/questionnaire-security/docs/development.md) | [Development](experiments/questionnaire-security/docs/development.en.md) |
+| API and submissions | [API](experiments/questionnaire-security/docs/api.md) | [API](experiments/questionnaire-security/docs/api.en.md) |
+
+The [CV experiment](docs/legacy-cv-experiment.en.md) has code in
+`src/recruitsecbench/`, CLI `rscb` and its own contracts. CI checks each experiment
+in a separate job. Tests use substitute models to verify implementation;
+robustness results require campaigns with real models.
