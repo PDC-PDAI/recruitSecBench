@@ -1,0 +1,184 @@
+{
+  "source_repository": "https://github.com/PDC-PDAI/scenario-emulator",
+  "variants": {
+    "baseline_r1": {
+      "source_ref": "origin/bateria-testes-r1",
+      "source_commit": "acd083ab3c7adfad1949abf8607665afde24b7cc",
+      "files": [
+        {
+          "source": "src/services/questionnaire/service.py",
+          "destination": "rscb_questionnaire/variants/baseline_r1/questionnaire.py",
+          "source_sha256": "2afb2e29c99adfeba00ddaf22e44da442d89bc3f9a1b29a24724c20542754ba6",
+          "destination_sha256": "3f097abb1acbaf7033086ac5d68dee8dee1ac0452959d77eb1e611b4b94438bd"
+        },
+        {
+          "source": "src/services/evaluation/service.py",
+          "destination": "rscb_questionnaire/variants/baseline_r1/evaluation.py",
+          "source_sha256": "81c65e7b07b2ccbc0e8cf1d2c40320960e61f375c541117bdc73fbc76b67e2f7",
+          "destination_sha256": "04e30267ac4f184077198dabee88744eb3be482e91e9087ded489a25ffd66bd0"
+        },
+        {
+          "source": "src/prompts/raw_prompts.py",
+          "destination": "rscb_questionnaire/variants/baseline_r1/prompts.py",
+          "source_sha256": "431ea420405962597a0f53afde47b1a0dee543967d5d6e5d76ae415751a08f9d",
+          "destination_sha256": "3cd0eb2a35580499dd4287c5acd263d5ddd290ae4516a7eeb6db3660aff2cf91"
+        },
+        {
+          "source": "src/services/questionnaire/utils.py",
+          "destination": "rscb_questionnaire/variants/baseline_r1/questionnaire_utils.py",
+          "source_sha256": "e63ea4124e90b8acdc427c9f79eec3817ce3cb171d38d400f51fad4029aaf79a",
+          "destination_sha256": "c2d13f807630079497cd73b94de8f4134fb459fc4c0c2704a2143c2c0dd870de"
+        },
+        {
+          "source": "tests/test_evaluation.py",
+          "destination": "tests/test_baseline_r1_evaluation.py",
+          "source_sha256": "3ae0507b405142c95766b32872d2b6cb7b6b2195b9e7e92cc1c86b36001e01da",
+          "destination_sha256": "550ce350e27c6b5fc5002ffff139c5fa60d37ec979c618a5ee91e07105eb755f"
+        }
+      ]
+    },
+    "fides": {
+      "source_ref": "origin/feat/fides",
+      "source_commit": "3aae97d23c8ec6610b83badb7956c46387672851",
+      "files": [
+        {
+          "source": "src/services/questionnaire/service.py",
+          "destination": "rscb_questionnaire/variants/fides/questionnaire.py",
+          "source_sha256": "ed85435258a7a8758388071630c30ad57d5c4af1f03764eced024a004c321da7",
+          "destination_sha256": "adc2b5c17fdd49788ae567ff54fe4fcde31f8288339edd37e5ea12a4b390027d"
+        },
+        {
+          "source": "src/services/evaluation/service.py",
+          "destination": "rscb_questionnaire/variants/fides/evaluation.py",
+          "source_sha256": "662249a7e96a1c4318b9ef2df87348746561447822d48dba2bc6a194ae38b3f7",
+          "destination_sha256": "991a8b12878b872528192fd5ccd481763b45149ef77370412fe9a3eb394e9fcc"
+        },
+        {
+          "source": "src/prompts/raw_prompts.py",
+          "destination": "rscb_questionnaire/variants/fides/prompts.py",
+          "source_sha256": "bbd00bc11a0acfed05560ead51ebcf000cd9cf50b049b2a5127861ce92edfbd0",
+          "destination_sha256": "a14c9f1738449fd5d3dd579c7a8ba45a38ab52331db9762d3cdb2b88cc6b66da"
+        },
+        {
+          "source": "src/services/questionnaire/utils.py",
+          "destination": "rscb_questionnaire/variants/fides/questionnaire_utils.py",
+          "source_sha256": "e63ea4124e90b8acdc427c9f79eec3817ce3cb171d38d400f51fad4029aaf79a",
+          "destination_sha256": "f5e57ab7ca75a8897da47bb4204b25dde4a48cd629c498ad3d5e0a0c4bc81f2b"
+        },
+        {
+          "source": "src/security/__init__.py",
+          "destination": "rscb_questionnaire/variants/fides/security/__init__.py",
+          "source_sha256": "20cfe221073110b98c2ad3e6a67b8922b568bcabfba56d39e3f9b7ff56311b1b",
+          "destination_sha256": "ae6a04c79f66f56c12dce687cf7197ecfbc6eb1e4f2309ac7e191c388364eadd"
+        },
+        {
+          "source": "src/security/fides.py",
+          "destination": "rscb_questionnaire/variants/fides/security/fides.py",
+          "source_sha256": "aee22c7a3316808e2f9627da11c592bee71fdd0a57da6447272b67992ec7e199",
+          "destination_sha256": "6bab86b5d09f597ee8aa9a923a86095e3c0aa658e23242e8234b15d8f1031be1"
+        },
+        {
+          "source": "tests/test_fides.py",
+          "destination": "tests/test_fides.py",
+          "source_sha256": "4f84b97f9bdbf626a61882112ed11dc5ab22e022dea614a5ff659f22d77d7319",
+          "destination_sha256": "1ce6aacc5c31cbfb398586b8d0d3164963adcc694f7c2047c4a8d1a2d9b32e01"
+        }
+      ]
+    },
+    "camel": {
+      "source_ref": "origin/feat/camel",
+      "source_commit": "804bece92622d256fc7211fb0d1ca01d9841f4ef",
+      "files": [
+        {
+          "source": "src/services/questionnaire/service.py",
+          "destination": "rscb_questionnaire/variants/camel/questionnaire.py",
+          "source_sha256": "b61a18742e7c7b548596f7711205f02f5962d38321ce7b1af01275f84cb74356",
+          "destination_sha256": "1c967fe6f4f42045c92483253c447d4912e06d3286c22d7b7293bf8e6b901926"
+        },
+        {
+          "source": "src/services/evaluation/service.py",
+          "destination": "rscb_questionnaire/variants/camel/evaluation.py",
+          "source_sha256": "e7fbc1fced3a219e9bc9f7b70bcda271b8ebeca0aa9e4c31394a48b99b12c637",
+          "destination_sha256": "76dffe3b2dd8e2e8f6c2628bf3db3f2b2bddf523131fb31466258943aaa04468"
+        },
+        {
+          "source": "src/prompts/raw_prompts.py",
+          "destination": "rscb_questionnaire/variants/camel/prompts.py",
+          "source_sha256": "baf505e65d7ef0a29f72c10613371c847dab0b134440ddba5fde3ba5058fce04",
+          "destination_sha256": "bd0d4121d730743631e261f106764f895f1d021aee43a878d193716e5368eca5"
+        },
+        {
+          "source": "src/services/questionnaire/utils.py",
+          "destination": "rscb_questionnaire/variants/camel/questionnaire_utils.py",
+          "source_sha256": "fea80564bfc7469fefb86b3db5c4a74405ca0fbfc07906e38dd9174f919c2a49",
+          "destination_sha256": "6f98c680720038ed58e6deb05595f42726ec6a4b043da31d83977b5621f4b22d"
+        },
+        {
+          "source": "src/security/__init__.py",
+          "destination": "rscb_questionnaire/variants/camel/security/__init__.py",
+          "source_sha256": "f69a824caa4563cce81e2cccf84bdbf40a2607b0fe34d96ec08e1e3c0f66ce85",
+          "destination_sha256": "1889db04627fd1f06a3c59c12a56eaf23326c436a4cebb61dbc1c76a9dc43fd0"
+        },
+        {
+          "source": "src/security/camel.py",
+          "destination": "rscb_questionnaire/variants/camel/security/camel.py",
+          "source_sha256": "912ba302248604c907238558222e9c2b820400512b8cdf41ac47589175860cbd",
+          "destination_sha256": "0bd0635a19f45bf92e328dd389c84a01c5c6c82520a8ecff042d3cc4b256624f"
+        },
+        {
+          "source": "src/security/policies.py",
+          "destination": "rscb_questionnaire/variants/camel/security/policies.py",
+          "source_sha256": "315ce77c93a6be6431f002b17f221b0833a06ca5d585ecbc02e73c5dc362d3d1",
+          "destination_sha256": "41a225ba24f1ad40c91f62df5d6afd0a3a98b1cb00f2c96164644461e07ea137"
+        },
+        {
+          "source": "src/security/schemas.py",
+          "destination": "rscb_questionnaire/variants/camel/security/schemas.py",
+          "source_sha256": "c78471c08c1ac2b55c24d073002d9c244883b295f226eb39ec8fdad845f58fc7",
+          "destination_sha256": "c78471c08c1ac2b55c24d073002d9c244883b295f226eb39ec8fdad845f58fc7"
+        },
+        {
+          "source": "tests/test_camel_security.py",
+          "destination": "tests/test_camel_security.py",
+          "source_sha256": "7622d7f1c0bf2636b3ecc21c2df1a0dbe547c500b1abcc4d2b1aa182ded2c809",
+          "destination_sha256": "66497a04f97fc83b0831c9ff3fac88a364515a5d10b8b060aee4bdef7c902a00"
+        }
+      ]
+    }
+  },
+  "battery_files": [
+    {
+      "source": "configs/questionnaire_battery.yaml",
+      "destination": "configs/questionnaire_battery.yaml",
+      "source_sha256": "49d6189e3995d105de8bd33b7a54391bf6cd98dc23795d491e45ea2be0590192",
+      "destination_sha256": "49d6189e3995d105de8bd33b7a54391bf6cd98dc23795d491e45ea2be0590192"
+    },
+    {
+      "source": "configs/questionnaire_battery.yaml",
+      "destination": "rscb_questionnaire/profiles/questionnaire_battery.yaml",
+      "source_sha256": "49d6189e3995d105de8bd33b7a54391bf6cd98dc23795d491e45ea2be0590192",
+      "destination_sha256": "49d6189e3995d105de8bd33b7a54391bf6cd98dc23795d491e45ea2be0590192"
+    },
+    {
+      "source": "scripts/run_questionnaire_battery.py",
+      "destination": "rscb_questionnaire/battery.py",
+      "source_sha256": "bb9fb0195a28bc41a2eda97df05a230d53b330ad3f45483d61d25a586a1346d9",
+      "destination_sha256": "50a01a53b325485b57704b730b463c9b43518916561fde7600105dcf463d23d6"
+    },
+    {
+      "source": "tests/test_questionnaire_battery.py",
+      "destination": "tests/test_questionnaire_battery.py",
+      "source_sha256": "f35e137d228c954441fa36fa6f32e14f4c2ade5efa498cd49701230139e53824",
+      "destination_sha256": "6743526da92cd482e20f27b1419ed771366d31df70443cbca174a69fa5120a11"
+    }
+  ],
+  "schema_version": "1.0",
+  "port_base_commit": "e9ee1f04db0a909a18ff0baa220810acf8aa361a",
+  "battery_source_commit": "acd083ab3c7adfad1949abf8607665afde24b7cc",
+  "adaptations": [
+    "Python imports and prompt namespaces isolated per variant",
+    "Generator and evaluator selected together through CLI/API and persisted scenario defense",
+    "Common runtime retained, including provider retries, OpenRouter and observability improvements",
+    "Battery packaged with unchanged YAML; defense provenance and strict resume manifest checks added"
+  ]
+}

@@ -18,3 +18,19 @@ jobs:
       - run: uv run mypy src
       - run: uv run bandit -q -r src
       - run: uv run pytest
+
+  questionnaire-security:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: experiments/questionnaire-security
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run pytest -q
+      - run: uv build
