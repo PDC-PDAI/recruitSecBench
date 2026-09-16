@@ -15,8 +15,7 @@ produced form, `ResponseGenerationService` generates answer cases,
 `SubmissionService` validates submissions, and `EvaluationService` evaluates `FORMULARIO`.
 
 The two attack surfaces are the command received by the questionnaire generator
-and the answer text received by the evaluator. CVs and PDF extraction are outside
-this protocol. Role settings allow the attack generator and evaluator to use
+and the answer text received by the evaluator. Role settings allow the attack generator and evaluator to use
 different models.
 
 ## Implemented oracles
@@ -89,4 +88,4 @@ and evaluator may share biases when using the same model family. Deterministic
 oracles verify implemented criteria and do not establish general security.
 
 Compare results under the same protocol and unit of analysis. Metrics from
-CV experiments or other tasks require separate reporting.
+other tasks require separate reporting.

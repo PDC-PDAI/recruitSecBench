@@ -4,8 +4,7 @@
 
 ## Ambiente e configuração
 
-A distribuição Python `recruitsecbench` inclui os pacotes `recruitsecbench` e
-`rscb_questionnaire`. Execute os comandos na raiz: um único `pyproject.toml`
+A distribuição Python `recruitsecbench` contém o pacote `rscb_questionnaire`. Execute os comandos na raiz: um único `pyproject.toml`
 declara dependências, comandos e testes; `uv.lock` fixa o ambiente da reprodução.
 
 O perfil padrão e o corpus da bateria são incluídos na distribuição. A CLI
@@ -54,7 +53,7 @@ uv build
 ```
 
 Os testes cobrem modelos substitutos, respostas adversariais, proveniência,
-submissões, exportação e API. O CI executa as duas frentes na mesma instalação e suíte de testes.
+submissões, exportação e API. O CI verifica o experimento na instalação única da raiz.
 Não há execução paga de LLM nem sincronização de prompts remotos durante testes.
 
 Os registros históricos da importação ficam em

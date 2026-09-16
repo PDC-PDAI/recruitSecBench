@@ -15,8 +15,6 @@ jobs:
           python-version: "3.12"
       - run: uv sync --all-groups --locked
       - run: uv run ruff check .
-      - run: uv run mypy
-      - run: uv run bandit -q -r src/recruitsecbench
       - run: uv run pytest
       - run: uv run rscb-questionnaire validate-profile
       - run: uv build

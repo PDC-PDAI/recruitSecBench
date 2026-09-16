@@ -168,11 +168,9 @@ uv run rscb-questionnaire export-trace --trace-id TRACE_ID --output outputs/trac
 |---|---|
 | `.env.example`, `pyproject.toml`, `uv.lock` | Shared configuration and installation |
 | `src/rscb_questionnaire/` | Questionnaires, evaluator, defenses and profiles |
-| `src/recruitsecbench/` | Tools for the résumé experiment |
 | `tests/` | Full suite; questionnaire tests in `tests/questionnaire/` |
 | `docs/` | Technical guides, figures and import provenance |
-| `data/`, `protocol/`, `schemas/`, `contracts/` | Benchmark data and contracts |
-| `specs/` | Specification history |
+| `data/` | Local API SQLite database, ignored by Git |
 | `outputs/`, `artifacts/` | Local results, ignored by Git |
 
 ## Development
@@ -193,7 +191,6 @@ uv build
 | Architecture and development | [Desenvolvimento](docs/questionnaire/development.md) | [Development](docs/questionnaire/development.en.md) |
 | API and submissions | [API](docs/questionnaire/api.md) | [API](docs/questionnaire/api.en.md) |
 
-The [CV experiment](docs/legacy-cv-experiment.en.md) has code in
-`src/recruitsecbench/`, CLI `rscb` and its own contracts. CI checks both packages
-in the same environment. Tests use substitute models to verify implementation;
-robustness results require campaigns with real models.
+CI checks lint, tests, profile validation and the build using the single root
+installation. Tests use substitute models; robustness results require campaigns
+with real models.

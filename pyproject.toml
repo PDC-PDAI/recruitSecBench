@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "recruitsecbench"
 version = "0.1.0"
-description = "Reproducible security benchmark for recruitment agents"
+description = "Security benchmark for recruitment questionnaire generation and evaluation"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
@@ -17,38 +17,27 @@ dependencies = [
   "langfuse>=4.14.0,<5",
   "ollama>=0.6.2",
   "openai>=1.0.0",
-  "jsonschema>=4.23,<5",
   "pydantic>=2.10,<3",
   "pydantic-settings>=2.7",
   "python-dotenv>=1.0",
-  "pymupdf>=1.28.0",
-  "pypdf>=5,<7",
   "pyyaml>=6,<7",
-  "reportlab>=4,<5",
   "structlog>=24.4",
-  "typer>=0.12,<1",
   "uvicorn[standard]>=0.35,<0.36",
 ]
 
 [project.scripts]
-rscb = "recruitsecbench.cli.main:main"
 rscb-questionnaire = "rscb_questionnaire.cli:main"
 rscb-questionnaire-battery = "rscb_questionnaire.battery:main"
 
 [dependency-groups]
 dev = [
-  "bandit>=1.7,<2",
-  "mypy>=1.10,<2",
   "pytest>=8.3,<9",
   "pytest-asyncio>=0.25",
   "ruff>=0.5,<1",
-  "types-jsonschema>=4.23,<5",
-  "types-pyyaml>=6,<7",
-  "types-reportlab>=4,<5",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/recruitsecbench", "src/rscb_questionnaire"]
+packages = ["src/rscb_questionnaire"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -60,22 +49,5 @@ line-length = 100
 src = ["src", "tests"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "SIM"]
-
-[tool.ruff.lint.per-file-ignores]
-# Preserve the imported experiment's lint scope while using one project config.
-"src/rscb_questionnaire/**" = ["E501", "UP", "B", "SIM"]
-"tests/questionnaire/**" = ["E501", "UP", "B", "SIM"]
-
-[tool.mypy]
-python_version = "3.12"
-strict = true
-files = ["src/recruitsecbench"]
-
-[[tool.mypy.overrides]]
-module = ["fitz"]
-ignore_missing_imports = true
-
-[tool.bandit]
-targets = ["src"]
-skips = ["B101"]
+select = ["E", "F", "I", "PL", "W"]
+ignore = ["E501", "PLR0913"]

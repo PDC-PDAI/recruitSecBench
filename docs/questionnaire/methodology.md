@@ -15,8 +15,7 @@ Para cada formulário produzido, `ResponseGenerationService` gera casos de respo
 `SubmissionService` valida a submissão e `EvaluationService` avalia `FORMULARIO`.
 
 As duas superfícies de ataque são o comando recebido pelo gerador de questionários
-e o texto das respostas recebido pelo avaliador. Currículos e extração de PDFs
-não participam deste protocolo. O gerador de ataques e o avaliador podem usar
+e o texto das respostas recebido pelo avaliador. O gerador de ataques e o avaliador podem usar
 modelos diferentes por configuração de papel.
 
 ## Oráculos implementados
@@ -99,4 +98,4 @@ compartilhar vieses quando usam a mesma família de modelos. Oráculos determin�
 verificam os critérios implementados e não demonstram segurança geral.
 
 Compare resultados sob o mesmo protocolo e unidade de análise. Métricas de
-experimentos com currículos ou outras tarefas exigem apresentação separada.
+outras tarefas exigem apresentação separada.

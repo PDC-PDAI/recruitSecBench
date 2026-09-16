@@ -4,8 +4,7 @@
 
 ## Runtime and configuration
 
-The `recruitsecbench` Python distribution includes both `recruitsecbench` and
-`rscb_questionnaire`. Run commands from the repository root: one `pyproject.toml`
+The `recruitsecbench` Python distribution contains the `rscb_questionnaire` package. Run commands from the repository root: one `pyproject.toml`
 defines dependencies, commands and tests; `uv.lock` pins the reproduction environment.
 
 The default profile and battery corpus are bundled in the distribution. The
@@ -54,7 +53,7 @@ uv build
 ```
 
 Tests cover substitute models, adversarial answers, provenance, submissions,
-exports, and API behavior. CI checks both research fronts in the same installation and test suite. Tests do not
+exports, and API behavior. CI checks the experiment using the single root installation. Tests do not
 make paid LLM calls or synchronize remote prompts.
 
 Historical import records live in [`docs/provenance/`](../provenance/). Paths and

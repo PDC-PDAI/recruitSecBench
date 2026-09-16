@@ -137,7 +137,7 @@
 - **Assets and affected people**: [data, actions, systems, candidates, reviewers]
 - **Adversaries and capabilities**: [trusted and untrusted actors, inputs, and limits]
 - **Authorized scope**: [users, projects, processes, vacancies, applications, candidates]
-- **Untrusted inputs**: [CVs, vacancies, responses, retrieved content, model/tool output]
+- **Untrusted inputs**: [vacancies, coordinator commands, candidate answers, model/tool output]
 - **Deterministic invariants**: [tools, IDs, relationships, states, scopes, hashes, canaries]
 
 ### Evidence and Measurement

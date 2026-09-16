@@ -7,7 +7,6 @@ dist/
 build/
 *.egg-info/
 .pytest_cache/
-.mypy_cache/
 .ruff_cache/
 .coverage
 coverage/
@@ -19,8 +18,6 @@ outputs/
 data/*.db
 data/*.db-shm
 data/*.db-wal
-data/restricted/
-manifests/local/
 *.log
 *.tmp
 *.swp
@@ -29,8 +26,4 @@ Thumbs.db
 .vscode/
 .idea/
 
-pdfs/
-data/derived-restricted/
-
-data/redacted-restricted/
 .references/

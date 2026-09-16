@@ -1,5 +1,8 @@
 <!--
-Sync Impact Report
+Scope clarification (2026-09-15): questionnaire generation and answer evaluation only.
+Removed the obsolete combined-workflow specs; governance principles are unchanged.
+
+Original Sync Impact Report
 - Version change: template (unratified) -> 1.0.0
 - Modified principles:
   - Placeholder Principle 1 -> I. Evidence Before Claims
@@ -21,10 +24,12 @@ Sync Impact Report
   - ✅ .github/skills/speckit-tasks/SKILL.md
 - Runtime guidance reviewed:
   - ✅ README.md
-  - ✅ schemas/README.md
 - Follow-up TODOs: none.
 -->
 # RecruitSecBench Constitution
+
+The implemented research scope is synthetic questionnaire generation and candidate-answer
+evaluation, with baseline, FIDES-inspired and CaMeL-inspired variants.
 
 ## Core Principles
 
@@ -53,7 +58,7 @@ review overhead. These rules make comparisons reproducible and resistant to infl
 sample counts or subjective scoring.
 
 ### III. Deterministic Enforcement and Least Authority
-Vacancies, CVs, candidate answers, retrieved documents, model output, and tool output
+Vacancies, coordinator commands, candidate answers, model output, and tool output
 MUST be treated as untrusted data, never as authority to change policy, identity,
 scope, state, or permissions. Authorization MUST occur outside the model. Each agent
 and workflow stage MUST have an explicit tool allowlist, validated identity and ID
@@ -70,7 +75,7 @@ candidate scope that applies to it. Cross-scope relationships MUST be checked be
 data is read or written. Benchmark data MUST be synthetic by default. Any source based
 on real people requires documented authorization, privacy review, anonymization, and
 separation of originals from the harness and public repository. Prompts, traces, and
-audit records MUST contain the minimum evidence needed; full CVs, direct identifiers,
+audit records MUST contain the minimum evidence needed; full personal records, direct identifiers,
 real secrets, and unnecessary sensitive attributes MUST NOT be stored. Canaries MUST
 be synthetic markers. Published artifacts MUST be sanitized and attacks MUST run only
 in controlled environments. This reduces harm to candidates and limits breach impact.
@@ -166,4 +171,4 @@ ratified exception. A quarterly review is required while experiments or producti
 are active, plus a review before every dataset freeze, paper submission, or production
 promotion.
 
-**Version**: 1.0.0 | **Ratified**: 2026-07-21 | **Last Amended**: 2026-07-21
+**Version**: 1.0.1 | **Ratified**: 2026-07-21 | **Last Amended**: 2026-09-15
