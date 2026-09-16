@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=1.25"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
@@ -11,23 +11,36 @@ requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [{ name = "RecruitSecBench contributors" }]
 dependencies = [
+  "agno>=2.6.5,<3",
+  "fastapi>=0.116,<0.117",
+  "langdetect>=1.0.9",
+  "langfuse>=4.14.0,<5",
+  "ollama>=0.6.2",
+  "openai>=1.0.0",
   "jsonschema>=4.23,<5",
-  "pydantic>=2.7,<3",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7",
+  "python-dotenv>=1.0",
   "pymupdf>=1.28.0",
   "pypdf>=5,<7",
   "pyyaml>=6,<7",
   "reportlab>=4,<5",
+  "structlog>=24.4",
   "typer>=0.12,<1",
+  "uvicorn[standard]>=0.35,<0.36",
 ]
 
 [project.scripts]
 rscb = "recruitsecbench.cli.main:main"
+rscb-questionnaire = "rscb_questionnaire.cli:main"
+rscb-questionnaire-battery = "rscb_questionnaire.battery:main"
 
 [dependency-groups]
 dev = [
   "bandit>=1.7,<2",
   "mypy>=1.10,<2",
-  "pytest>=8.2,<9",
+  "pytest>=8.3,<9",
+  "pytest-asyncio>=0.25",
   "ruff>=0.5,<1",
   "types-jsonschema>=4.23,<5",
   "types-pyyaml>=6,<7",
@@ -35,11 +48,11 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/recruitsecbench"]
+packages = ["src/recruitsecbench", "src/rscb_questionnaire"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra"
+addopts = "-ra --import-mode=importlib"
 
 [tool.ruff]
 target-version = "py312"
@@ -49,10 +62,15 @@ src = ["src", "tests"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
 
+[tool.ruff.lint.per-file-ignores]
+# Preserve the imported experiment's lint scope while using one project config.
+"src/rscb_questionnaire/**" = ["E501", "UP", "B", "SIM"]
+"tests/questionnaire/**" = ["E501", "UP", "B", "SIM"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
-packages = ["recruitsecbench"]
+files = ["src/recruitsecbench"]
 
 [[tool.mypy.overrides]]
 module = ["fitz"]

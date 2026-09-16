@@ -15,6 +15,10 @@ coverage/
 .env.*
 !.env.example
 artifacts/
+outputs/
+data/*.db
+data/*.db-shm
+data/*.db-wal
 data/restricted/
 manifests/local/
 *.log
@@ -29,3 +33,4 @@ pdfs/
 data/derived-restricted/
 
 data/redacted-restricted/
+.references/
