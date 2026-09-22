@@ -9,6 +9,8 @@ import pytest
 from agno.run.agent import RunOutput
 from pydantic import BaseModel, ConfigDict
 
+from rscb_questionnaire.agents.model import structured_output_agent_options
+from rscb_questionnaire.agents.openrouter import OpenRouterChat
 from rscb_questionnaire.schemas.coordinator_prompt.schema import (
     CoordinatorPrompt,
     ExpectedAction,
@@ -56,6 +58,18 @@ class _Output(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     value: str
+
+
+def test_qwen_openrouter_quarantine_uses_json_mode():
+    model = OpenRouterChat(id="qwen/qwen3-8b", api_key="test")
+
+    assert structured_output_agent_options(model) == {
+        "structured_outputs": False,
+        "use_json_mode": True,
+        "parse_response": False,
+    }
+    assert model.extra_body == {"reasoning": {"enabled": False, "exclude": True}}
+    assert structured_output_agent_options(SimpleNamespace(id="qwen/qwen3-8b")) == {}
 
 
 def _job(*, marker: str = "RAW_JOB_MARKER") -> JobDescription:

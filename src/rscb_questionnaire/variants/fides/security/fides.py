@@ -10,7 +10,12 @@ from typing import Any, Generic, TypeVar
 from agno.agent import Agent
 from pydantic import BaseModel
 
-from rscb_questionnaire.agents.model import ModelRole, build_model, get_model_identifier
+from rscb_questionnaire.agents.model import (
+    ModelRole,
+    build_model,
+    get_model_identifier,
+    structured_output_agent_options,
+)
 from rscb_questionnaire.agents.utils import extract_usage, parse_model_output
 from rscb_questionnaire.prompts.manager import resolve_prompt
 
@@ -334,6 +339,7 @@ class FidesQuarantinedLLM:
             description=system.content,
             output_schema=output_schema,
             tools=[],
+            **structured_output_agent_options(model),
         )
         response = await agent.arun(user.content)
         parsed = parse_model_output(response.content, output_schema)

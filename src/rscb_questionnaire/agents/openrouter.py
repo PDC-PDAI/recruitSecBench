@@ -4,6 +4,7 @@ from typing import Any
 
 from agno.models.message import Message
 from agno.models.openai import OpenAIChat
+from rscb_questionnaire.agents.consumption import observe
 
 
 def _reasoning_details(payload: Any) -> list[dict[str, Any]]:
@@ -43,6 +44,7 @@ class OpenRouterChat(OpenAIChat):
         return formatted
 
     def _parse_provider_response(self, response: Any, response_format: Any = None) -> Any:
+        observe(response, self.id)
         model_response = super()._parse_provider_response(response, response_format)
         details = _reasoning_details(response.choices[0].message)
         if details:
@@ -52,6 +54,7 @@ class OpenRouterChat(OpenAIChat):
         return model_response
 
     def _parse_provider_response_delta(self, response_delta: Any) -> Any:
+        observe(response_delta, self.id)
         model_response = super()._parse_provider_response_delta(response_delta)
         if response_delta.choices:
             details = _reasoning_details(response_delta.choices[0].delta)

@@ -7,7 +7,11 @@ from typing import Any, Generic, TypeVar
 from agno.agent import Agent
 from pydantic import BaseModel
 
-from rscb_questionnaire.agents.model import ModelRole, build_model
+from rscb_questionnaire.agents.model import (
+    ModelRole,
+    build_model,
+    structured_output_agent_options,
+)
 from rscb_questionnaire.agents.utils import parse_model_output
 
 T = TypeVar("T")
@@ -86,12 +90,14 @@ class QuarantinedLLM:
         user: str,
         output_schema: type[SchemaT],
     ) -> SchemaT:
+        model = build_model(role)
         agent = Agent(
             name=name,
-            model=build_model(role),
+            model=model,
             description=system,
             output_schema=output_schema,
             tools=[],
+            **structured_output_agent_options(model),
         )
         response = await agent.arun(user)
         return parse_model_output(response.content, output_schema)

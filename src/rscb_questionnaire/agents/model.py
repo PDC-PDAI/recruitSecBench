@@ -89,5 +89,26 @@ def get_model_identifier(model: Any) -> str:
     return str(getattr(model, "id", model))
 
 
+def structured_output_agent_options(model: Any) -> dict[str, bool]:
+    """Use a provider-compatible structured-output transport when required."""
+    model_id = get_model_identifier(model).lower()
+    if isinstance(model, OpenRouterChat) and model_id == "google/gemini-3.7-flash":
+        return {"structured_outputs": False, "use_json_mode": True}
+    if isinstance(model, OpenRouterChat) and model_id == "qwen/qwen3-8b":
+        # OpenRouter exposes JSON mode for this endpoint, but not the native
+        # parsed-output path that Agno assumes for every OpenAIChat subclass.
+        # Qwen's reasoning stream can also exhaust the structured response and
+        # leave only a schema-field fragment. Quarantine stages are compact,
+        # typed transformations, so disable reasoning and validate their raw
+        # JSON with the shared Pydantic parser.
+        model.extra_body = {"reasoning": {"enabled": False, "exclude": True}}
+        return {
+            "structured_outputs": False,
+            "use_json_mode": True,
+            "parse_response": False,
+        }
+    return {}
+
+
 def configured_model_identifier(role: ModelRole = "default") -> str:
     return _role_config(role)[1]

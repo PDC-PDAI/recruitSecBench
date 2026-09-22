@@ -625,7 +625,22 @@ repetem as chaves homônimas documentadas acima para permitir consultas SQL dire
     (output_dir / DATA_DICTIONARY_FILENAME).write_text(content, encoding="utf-8")
 
 
-async def _execute(
+async def _execute(item, campaign, semaphore, defense=Defense.BASELINE_R1):
+    from rscb_questionnaire.agents.consumption import active_consumption, summarize
+
+    context = {"run_key": item.run_key, "defense": Defense(defense).value,
+               "events": [], "seen": set()}
+    token = active_consumption.set(context)
+    try:
+        record = await _execute_with_consumption(item, campaign, semaphore, defense)
+        record["provider_usage_events"] = context["events"]
+        record["consumption"] = summarize(context["events"])
+        return record
+    finally:
+        active_consumption.reset(token)
+
+
+async def _execute_with_consumption(
     item: WorkItem,
     campaign: str,
     semaphore: asyncio.Semaphore,
