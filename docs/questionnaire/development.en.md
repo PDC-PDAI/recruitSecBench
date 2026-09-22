@@ -56,7 +56,13 @@ Tests cover substitute models, adversarial answers, provenance, submissions,
 exports, and API behavior. CI checks the experiment using the single root installation. Tests do not
 make paid LLM calls or synchronize remote prompts.
 
-Historical import records live in [`docs/provenance/`](../provenance/). Paths and
-hashes in those JSON files describe the original import, before the move into
-`src/` and `tests/questionnaire/`; they are not manifests of the current checkout.
-Prompts, corpus and historical defense revisions were preserved during reorganization.
+## Why keep tests
+
+The 13 test files check the corpus and battery resumption, input/output contracts,
+oracles, defense isolation, configuration, persistence, and traces. They do not
+run during campaigns. Baseline implementations share common checks instead of
+maintaining duplicate suites.
+
+The prospective error-recovery research profile and SpecKit planning templates
+have been removed from the artifact. The package retains the `security` profile
+and the trajectory records needed for the paper's audit.

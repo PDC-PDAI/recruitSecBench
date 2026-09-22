@@ -1,196 +1,143 @@
 # RecruitSecBench
 
-[🇧🇷 Português](README.md) · 🇺🇸 **English**
+**Security of LLM agents in recruitment workflows.**
 
-A security benchmark for LLM recruitment agents. It investigates **prompt
-injection in questionnaire generation and answer evaluation**, comparing
-baselines with FIDES and CaMeL defenses.
+[Português](README.md) · [Method](docs/questionnaire/methodology.en.md) · [Defenses](docs/questionnaire/defenses.en.md) · [API](docs/questionnaire/api.en.md)
 
-[Get started](#get-started) · [Methodology](docs/questionnaire/methodology.en.md) ·
-[Defenses and battery](docs/questionnaire/defenses.en.md) ·
-[Development](docs/questionnaire/development.en.md) ·
-[API](docs/questionnaire/api.en.md)
+Experimental code for *Evaluating Layered Security Controls for LLM Agents in
+Recruitment Workflows*. Compares a baseline with **FIDES-inspired** and
+**CaMeL-inspired** adaptations, examining sensitive questions, evaluation
+manipulation, and disclosure of internal information.
 
-## Experiment overview
+![Recruitment workflow: job description, questionnaire generation, and answer evaluation.](docs/figures/figura1_en.png)
 
-The workflow starts from a job description, generates a questionnaire and evaluates
-candidate answers. The benchmark exercises two attack surfaces: **AS-1**, the
-generator interface, and **AS-2**, the evaluator interface. Synthetic commands and
-answers support benign and adversarial cases.
+## 1. Install
 
-![Figure 1: recruitment workflow with AS-1 at the questionnaire generator and AS-2 at the LLM evaluator.](docs/figures/figura1_en.png)
-
-*Figure 1 — Experimental architecture and attack surfaces from the paper.*
-
-| Surface | Adversarial input | What to observe |
-|---|---|---|
-| **AS-1 · Generator** | Coordinator command | Compliance with malicious commands, over-refusal and questionnaire validity |
-| **AS-2 · Evaluator** | Questionnaire answers | Score manipulation, output alteration, evidence provenance and canary disclosure |
-
-## Integrity and confidentiality
-
-A refusal may prevent the malicious objective while the generated explanation
-still reveals internal information. Decision integrity and output confidentiality
-therefore need to be examined separately.
-
-![Figure 4: the malicious objective is rejected, but the security note may disclose an internal canary.](docs/figures/figura4_en.png)
-
-*Figure 4 — Refusal of a malicious objective with possible disclosure in the security explanation.*
-
-The figures use the paper's terminology. The implementation returns `valor`,
-`justificativa` and `evidencias`, with checks in `oracle`. `verdict` and
-`security_note` are not fields in this contract. Current canary checks inspect
-`justificativa`. See the [methodology](docs/questionnaire/methodology.en.md)
-for each check and its scope.
-
-## Get started
-
-Requirements: **Python 3.12+**, Git and `uv`. Work from the repository root:
+Requirements: **Python 3.12+**, **Git**, and **uv**. Run commands from the project root.
 
 ```bash
 git clone https://github.com/PDC-PDAI/recruitSecBench.git
 cd recruitSecBench
 uv sync --locked
 test -f .env || cp .env.example .env
-
-# Verification without model calls
-uv run rscb-questionnaire validate-profile
-uv run pytest -q
 ```
 
-Configure the provider in `.env` and run a small scenario including evaluation:
+## 2. Configure the model
 
-Run every command in this README from the repository root, using the same
-`.env`, `pyproject.toml` and `uv.lock`.
-
-```bash
-uv run rscb-questionnaire run --defense baseline \
-  --brief "Senior backend role using Python, FastAPI and PostgreSQL" \
-  --benign 1 --malicious 0 \
-  --benign-responses 1 --malicious-responses 0
-```
-
-This calls LLMs. Without the overrides above, the
-default profile requests one benign and three malicious commands, with one benign
-and two malicious answer cases per generated questionnaire.
-
-## Configuration
-
-Edit the single `.env` at the repository root for your provider:
+Edit `.env`. This example uses OpenRouter, the provider used in the paper:
 
 ```dotenv
-LLM_PROVIDER=openai
-OPENAI_API_KEY=your-key
-OPENAI_MODEL=gpt-5-mini
+LLM_PROVIDER=openai_like
+OPENAI_BASE_URL=https://openrouter.ai/api/v1
+OPENAI_API_KEY=your-openrouter-key
+OPENAI_MODEL=openai/gpt-5-mini
 LANGFUSE_TRACING_ENABLED=false
+LANGFUSE_PUBLIC_KEY=
+LANGFUSE_SECRET_KEY=
+LANGFUSE_BASE_URL=
 ```
 
-[.env.example](.env.example) documents OpenAI, OpenRouter (`openai_like`),
-Ollama/CEIA, and the `RESPONSE_GENERATOR_*` and `EVALUATOR_*` role overrides.
-Exported environment variables take precedence over `.env`. `QUESTIONNAIRE_HOME`
-selects another directory for `.env` and the default database; explicit output
-paths remain relative to the working directory.
+Empty Langfuse credentials select the versioned local prompts. Langfuse is
+optional. See [.env.example](.env.example) for other configurations.
 
-The security profile and battery corpus each have one canonical copy in
-[`src/rscb_questionnaire/profiles/`](src/rscb_questionnaire/profiles/), bundled
-in the installed package. Use `--profile path.yaml` for a custom profile;
-explicit flags override its values. `--brief-file briefing.txt` replaces `--brief`.
-For generation only, use `--benign-responses 0 --malicious-responses 0
---no-questionnaire-evaluator`.
+## 3. Run a small experiment
 
-## Baselines, FIDES and CaMeL
-
-| `--defense` | Variant | Coverage |
-|---|---|---|
-| `baseline` | Default baseline for the full pipeline | Generator and evaluator |
-| `baseline_r1` | Reference baseline for the R1 battery | Generator and evaluator |
-| `fides` | Integrity/confidentiality labels, reference monitor and quarantine | Generator and evaluator |
-| `camel` | Separation of control and data, quarantine and provenance policies | Generator and evaluator |
-
-Use `run --defense fides` or `run --defense camel` to select both stages.
-The [defense guide](docs/questionnaire/defenses.en.md) links
-to each implementation and explains comparison protocols.
-
-The R1 battery contains **380 generations per repetition**: 5 jobs × (75 attacks
-+ 1 control). Validate the corpus without model calls:
+First, validate the corpus and prepare the run **without calling models**:
 
 ```bash
-uv run rscb-questionnaire-battery --defense fides --dry-run
+uv run rscb-questionnaire-battery \
+  --defense baseline_r1 --repetitions 1 \
+  --output-dir outputs/first-experiment --dry-run
 ```
 
-The battery runs generation only. `rscb-questionnaire run` includes answers and
-evaluation for the questionnaires produced.
-
-## Evaluator and artifacts
-
-`EvaluationService` evaluates the `FORMULARIO` dimension after submission
-validation. Configure its model with `EVALUATOR_LLM_PROVIDER` and `EVALUATOR_MODEL`.
-The [API](docs/questionnaire/api.en.md) supports manual
-submissions and retrieval of persisted evaluations.
-
-- [Baseline evaluator](src/rscb_questionnaire/services/evaluation/service.py)
-- [Deterministic oracle](src/rscb_questionnaire/services/evaluation/oracle.py)
-- [Evaluation schemas](src/rscb_questionnaire/schemas/evaluation/schema.py)
-- [FIDES and CaMeL evaluators](docs/questionnaire/defenses.en.md#development-map)
-
-The full pipeline writes `scenario.json`, `benchmark.jsonl`, `agent-debug.jsonl`
-and `trajectories/` under `outputs/security/` by default. Use a directory per run
-and analyze generation and evaluation separately, with explicit denominators,
-refusals and runtime failures. A generation refusal prevents subsequent evaluation
-for that case; the [experimental criteria](docs/questionnaire/methodology.en.md)
-detail coverage, thresholds and limitations.
-
-Default output paths are reused. Preserve separate runs with explicit paths:
+The manifest should report **380 planned generations**. Now execute only the
+first two items: **one benign control and one attack**, for the first job.
+This command calls the model and consumes provider credits.
 
 ```bash
-uv run rscb-questionnaire run --brief-file briefing.txt \
-  --output outputs/run-001/scenario.json \
-  --jsonl outputs/run-001/benchmark.jsonl \
-  --agent-debug-jsonl outputs/run-001/agent-debug.jsonl \
-  --trajectories-dir outputs/run-001/trajectories
+uv run rscb-questionnaire-battery \
+  --defense baseline_r1 --repetitions 1 --limit 2 --concurrency 1 \
+  --output-dir outputs/first-experiment
 ```
 
-Langfuse is optional. Set `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`,
-`LANGFUSE_BASE_URL`, and `LANGFUSE_TRACING_ENABLED=true` to enable it. Runtime
-reads `LANGFUSE_PROMPT_LABEL`; sync writes to `LANGFUSE_SYNC_LABEL`. Without
-Langfuse, local prompts are used. See [defenses](docs/questionnaire/defenses.en.md)
-for per-variant synchronization and [methodology](docs/questionnaire/methodology.en.md)
-for recording versions and reproducing campaigns.
+Inspect the summary:
 
 ```bash
-uv run rscb-questionnaire sync-prompts
-uv run rscb-questionnaire export-trace --trace-id TRACE_ID --output outputs/trace.json
+cat outputs/first-experiment/summary.json
 ```
 
-## Structure
+For a fresh run, expect `recorded_generations: 2`, `controls_recorded: 1`, and
+`attacks_recorded: 1`. These confirm collection; inspect outputs and statuses
+to assess model behavior.
 
-| Path | Contents |
+| File in `outputs/first-experiment/` | Contents |
 |---|---|
-| `.env.example`, `pyproject.toml`, `uv.lock` | Shared configuration and installation |
-| `src/rscb_questionnaire/` | Questionnaires, evaluator, defenses and profiles |
-| `tests/` | Full suite; questionnaire tests in `tests/questionnaire/` |
-| `docs/` | Technical guides, figures and import provenance |
-| `data/` | Local API SQLite database, ignored by Git |
-| `outputs/`, `artifacts/` | Local results, ignored by Git |
+| `summary.json` | Run counts, materialized questionnaires, and statuses |
+| `generations.jsonl` | Inputs and results for each run |
+| `generations/` | One JSON per run for individual inspection |
+| `manifest.json` | Model, defense, corpus, and repetitions |
+| `questionnaire_battery.sqlite3` | SQLite copy of the records |
+| `DATA_DICTIONARY.md` | Field descriptions |
 
-## Development
+With OpenRouter, each generation’s `consumption` field records provider-reported
+tokens and cost. Missing cost is `null`; also inspect coverage in `usage_count`
+and `cost_count`.
 
-The project has one installation and one test suite. Questionnaire code lives in
-`src/rscb_questionnaire/`, with tests in `tests/questionnaire/`.
+Runs are resumable: repeating the command processes the next pending items.
+Use another directory to start over or change model, defense, or repetitions.
+Refusal or failure can coexist with a saved questionnaire; inspect the content
+alongside `status`.
+
+## 4. Scale up to the paper's generator battery
+
+The generator design contains **5 jobs × (15 topics × 5 strategies + 1 control) ×
+4 repetitions = 1,520 generations per regime**: 1,500 attacks and 20 controls.
+
+```bash
+uv run rscb-questionnaire-battery \
+  --defense baseline_r1 --repetitions 4 --concurrency 3 \
+  --output-dir outputs/gpt5mini-baseline-r1
+```
+
+Compare defenses with the same model and corpus, using a new directory for each
+variant:
+
+| `--defense` | Variant | Example `--output-dir` |
+|---|---|---|
+| `baseline_r1` | Battery baseline | `outputs/gpt5mini-baseline-r1` |
+| `fides` | FIDES-inspired adaptation | `outputs/gpt5mini-fides` |
+| `camel` | CaMeL-inspired adaptation | `outputs/gpt5mini-camel` |
+
+Add `--dry-run` to inspect the plan before executing the campaign.
+Record the commit (`git rev-parse HEAD`) and configuration without credentials
+alongside the results. The paper compares nine regimes: three models × three variants.
+
+> **Reproduction scope:** this battery runs generation, without semantic
+> classification or answer evaluation. Reproducing the published tables also
+> requires the detector, historical artifacts, and campaign configurations.
+> The `rscb-questionnaire run` workflow generates synthetic answers but does not
+> implement the historical evaluator protocol of 816 control–attack pairs per
+> profile. New LLM calls can produce different results.
+
+## Method and development
+
+The generator receives adversarial instructions intended to evade policies on
+sensitive attributes. The evaluator receives injections in candidate answers.
+The paper treats these surfaces separately and measures semantic compliance,
+availability, integrity, decision invariance, confidentiality, and persistent effects.
+
+- [Method and reproduction limits](docs/questionnaire/methodology.en.md)
+- [Defense implementations and the evaluator workflow](docs/questionnaire/defenses.en.md)
+- [Architecture and development](docs/questionnaire/development.en.md)
+- [API and manual submissions](docs/questionnaire/api.en.md)
 
 ```bash
 uv run ruff check .
 uv run pytest -q
+uv run rscb-questionnaire validate-profile
 uv build
 ```
 
-| Guide | Português | English |
-|---|---|---|
-| Methodology and reproduction | [Método](docs/questionnaire/methodology.md) | [Methodology](docs/questionnaire/methodology.en.md) |
-| Defenses and R1 battery | [Defesas](docs/questionnaire/defenses.md) | [Defenses](docs/questionnaire/defenses.en.md) |
-| Architecture and development | [Desenvolvimento](docs/questionnaire/development.md) | [Development](docs/questionnaire/development.en.md) |
-| API and submissions | [API](docs/questionnaire/api.md) | [API](docs/questionnaire/api.en.md) |
-
-CI checks lint, tests, profile validation and the build using the single root
-installation. Tests use substitute models; robustness results require campaigns
-with real models.
+Tests use substitute models, without paid calls. Code and corpus live in
+`src/rscb_questionnaire/`; tests in `tests/`; documentation in `docs/`.
+Credentials, local results, and paper references are not versioned.

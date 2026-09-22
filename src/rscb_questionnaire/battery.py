@@ -16,6 +16,7 @@ from rscb_questionnaire.agents.model import (
     configured_model_identifier,
     validate_model_configuration,
 )
+from rscb_questionnaire.agents.openrouter import active_consumption, summarize
 from rscb_questionnaire.clients.langfuse.client import flush_langfuse
 from rscb_questionnaire.schemas.coordinator_prompt.schema import (
     CoordinatorPrompt,
@@ -573,11 +574,26 @@ candidatos, avaliação de segurança nem classificação de 0 a 3. Estado da co
 - `completed_at`: término da tentativa em ISO 8601 e UTC.
 - `status`: resultado operacional do agente: `succeeded`, `refused`, `failed` ou `runtime_error`.
 - `failure_reason`: código/mensagem operacional quando não houve sucesso; caso contrário `null`.
-- `questionnaire`: questionário salvo pelo agente; `null` se recusado ou se ocorreu falha.
+- `questionnaire`: questionário materializado; `null` somente quando não foi capturado. Pode coexistir com `refused` ou `failed`: recusa não equivale a rollback.
 - `reasoning_summary`: resumo auditável emitido pelo agente; pode ser `null`.
 - `trajectory_id`: identificador da trajetória de geração; pode faltar apenas em `runtime_error` externo ao serviço.
 - `trace_id`: identificador do trace de observabilidade; pode faltar em erro anterior à criação do trace.
 - `duration_ms`: duração do serviço em milissegundos; pode faltar em `runtime_error` externo.
+
+### Consumo observado por geração
+
+- `provider_usage_events`: respostas observadas do OpenRouter, vinculadas a `run_key`, defesa, modelo e ID de geração do provider.
+- `consumption.generation_count`: quantidade de IDs de geração observados.
+- `consumption.usage_count`: quantidade desses IDs com dados de uso.
+- `consumption.cost_count`: quantidade desses IDs com custo informado.
+- `consumption.observed_prompt_tokens` e `observed_completion_tokens`: soma dos tokens informados pelo provider; zero sem observações não comprova consumo zero.
+- `consumption.observed_cost_usd`: soma dos custos informados em dólares; `null` quando nenhum custo foi recebido. Consulte `cost_count` para identificar cobertura parcial.
+- `consumption.coverage_note`: limitação da cobertura, incluindo tentativas internas do SDK e respostas não observadas.
+
+Não há estimativa de preço nem retokenização. Esses campos são registrados também
+no JSON individual e em `record_json` do SQLite. Outros providers não são
+instrumentados por esse cliente. `QUESTIONNAIRE_USAGE_JOURNAL` pode indicar um
+arquivo JSONL adicional para preservar eventos antes da conclusão da geração.
 
 ### Chaves de `questionnaire`
 
@@ -626,10 +642,12 @@ repetem as chaves homônimas documentadas acima para permitir consultas SQL dire
 
 
 async def _execute(item, campaign, semaphore, defense=Defense.BASELINE_R1):
-    from rscb_questionnaire.agents.consumption import active_consumption, summarize
-
-    context = {"run_key": item.run_key, "defense": Defense(defense).value,
-               "events": [], "seen": set()}
+    context = {
+        "run_key": item.run_key,
+        "defense": Defense(defense).value,
+        "events": [],
+        "seen": set(),
+    }
     token = active_consumption.set(context)
     try:
         record = await _execute_with_consumption(item, campaign, semaphore, defense)

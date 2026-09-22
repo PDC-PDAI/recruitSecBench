@@ -27,3 +27,9 @@ Thumbs.db
 .idea/
 
 .references/
+
+# Local agent and planning tools; not part of the reproducibility artifact.
+.agents/
+.codex/
+.github/skills/
+.specify/

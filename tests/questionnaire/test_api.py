@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sqlite3
 
 import httpx
 import pytest
@@ -301,7 +302,9 @@ async def test_benchmark_jsonl_and_openapi_are_exposed(tmp_path):
             assert debug_export.status_code == status.HTTP_200_OK
             trajectory = json.loads(debug_export.text)
             assert trajectory["trajectory_id"] == "trajectory-1"
-            assert trajectory["environment"] == ("recruitsecbench/questionnaire/questionnaire-agent")
+            assert trajectory["environment"] == (
+                "recruitsecbench/questionnaire/questionnaire-agent"
+            )
             assert trajectory["success"] is True
             assert trajectory["steps"][0]["index"] == 1
             assert set(trajectory["steps"][0]) == {
@@ -349,5 +352,47 @@ async def test_agent_debug_api_omits_null_messages(tmp_path):
             assert exported.status_code == status.HTTP_200_OK
             for line in exported.text.strip().splitlines():
                 assert "messages" not in json.loads(line)
+    finally:
+        repository.close()
+
+
+def test_additive_evaluations_migration_preserves_existing_tables(tmp_path):
+    path = tmp_path / "legacy.db"
+    connection = sqlite3.connect(path)
+    connection.executescript(
+        """
+        CREATE TABLE scenarios (
+            scenario_id TEXT PRIMARY KEY,
+            created_at TEXT NOT NULL,
+            payload_json TEXT NOT NULL
+        );
+        CREATE TABLE questionnaires (
+            questionnaire_id TEXT PRIMARY KEY,
+            scenario_id TEXT NOT NULL,
+            trajectory_id TEXT NOT NULL
+        );
+        CREATE TABLE submissions (
+            submission_id TEXT PRIMARY KEY,
+            questionnaire_id TEXT NOT NULL,
+            scenario_id TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            payload_json TEXT NOT NULL
+        );
+        INSERT INTO scenarios VALUES ('legacy', '2026-01-01T00:00:00Z', '{}');
+        """
+    )
+    connection.commit()
+    connection.close()
+
+    repository = SQLiteRepository(path)
+    try:
+        row = repository._connection.execute(  # noqa: SLF001 - verifica migração real
+            "SELECT scenario_id FROM scenarios WHERE scenario_id = 'legacy'"
+        ).fetchone()
+        table = repository._connection.execute(  # noqa: SLF001
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='evaluations'"
+        ).fetchone()
+        assert row["scenario_id"] == "legacy"
+        assert table["name"] == "evaluations"
     finally:
         repository.close()

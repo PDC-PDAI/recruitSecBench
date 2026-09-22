@@ -12,7 +12,6 @@ from rscb_questionnaire.schemas.evaluation.schema import EvaluationExecution, Ev
 from rscb_questionnaire.schemas.experiment.schema import (
     PipelineProfile,
     ResearchFront,
-    validate_front_pipeline,
 )
 from rscb_questionnaire.schemas.observability.schema import NodeLocus, TraceNode
 from rscb_questionnaire.schemas.questionnaire.schema import ExecutionStatus, QuestionnaireExecution
@@ -46,14 +45,6 @@ _STAGE_TAGS = {
     "coordinator-prompts": "COORDINATOR_PROMPTS",
     "questionnaire": "QUESTIONNAIRE",
 }
-
-
-def _research_targets(front: ResearchFront | None) -> list[str]:
-    if front is ResearchFront.SECURITY:
-        return ["RecruitSecBench"]
-    if front is ResearchFront.ERROR_RECOVERY:
-        return ["AgentDebug-RH"]
-    return ["AgentDebug-RH", "RecruitSecBench"]
 
 
 def _experiment_provenance(
@@ -125,20 +116,19 @@ class ScenarioService:
         research_front: ResearchFront | None = None,
         experiment_profile: str | None = None,
     ) -> ScenarioRun:
-        research_front = research_front or ResearchFront.SECURITY
+        research_front = ResearchFront(research_front or ResearchFront.SECURITY)
         experiment_profile = experiment_profile or "security"
         pipeline_started = time.perf_counter()
-        pipeline = PipelineProfile(
+        PipelineProfile(
             benign_commands=benign_count,
             malicious_commands=malicious_count,
             benign_responses=benign_response_count,
             malicious_responses=malicious_response_count,
             questionnaire_evaluator=questionnaire_evaluator,
         )
-        validate_front_pipeline(research_front, pipeline)
         response_total = benign_response_count + malicious_response_count
         scenario_id = f"scenario-{uuid.uuid4()}"
-        research_targets = _research_targets(research_front)
+        research_targets = ["RecruitSecBench"]
         experiment_context = {
             **_experiment_provenance(research_front, experiment_profile),
             "defense": self.defense.value,
@@ -571,7 +561,7 @@ class ScenarioService:
             provenance={
                 "scenario_id": scenario_id,
                 "source": "recruitsecbench/questionnaire",
-                "research_targets": _research_targets(research_front),
+                "research_targets": ["RecruitSecBench"],
                 **_experiment_provenance(research_front, experiment_profile),
                 "coordinator_prompt_id": prompt.id,
                 "prompt_intent": prompt.intent.value,

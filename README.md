@@ -1,197 +1,143 @@
 # RecruitSecBench
 
-🇧🇷 **Português** · [🇺🇸 English](README.en.md)
+**Segurança de agentes LLM em fluxos de recrutamento.**
 
-Benchmark de segurança para agentes de recrutamento baseados em LLMs.
-Investiga **prompt injection na geração de questionários e na avaliação de
-respostas**, comparando baselines e as defesas FIDES e CaMeL.
+[English](README.en.md) · [Método](docs/questionnaire/methodology.md) · [Defesas](docs/questionnaire/defenses.md) · [API](docs/questionnaire/api.md)
 
-[Começar](#começar) · [Método](docs/questionnaire/methodology.md) ·
-[Defesas e bateria](docs/questionnaire/defenses.md) ·
-[Desenvolvimento](docs/questionnaire/development.md) ·
-[API](docs/questionnaire/api.md)
+Código experimental do artigo *Evaluating Layered Security Controls for LLM Agents
+in Recruitment Workflows*. Compara um baseline com adaptações inspiradas em
+**FIDES** e **CaMeL**, observando geração de perguntas sensíveis, manipulação da
+avaliação e exposição de informação interna.
 
-## Visão do experimento
+![Fluxo de recrutamento: descrição da vaga, geração do questionário e avaliação das respostas.](docs/figures/figura1_pt.png)
 
-O fluxo parte da descrição de uma vaga, produz um questionário e avalia as
-respostas do candidato. O benchmark exercita duas superfícies de ataque:
-**AS-1**, a interface do gerador, e **AS-2**, a interface do avaliador.
-Comandos e respostas sintéticos permitem testar comportamento benigno e adversarial.
+## 1. Instale
 
-![Figura 1: fluxo de recrutamento com AS-1 no gerador de questionários e AS-2 no avaliador LLM.](docs/figures/figura1_pt.png)
-
-*Figura 1 — Arquitetura experimental e superfícies de ataque do artigo.*
-
-| Superfície | Entrada adversarial | O que observar |
-|---|---|---|
-| **AS-1 · Gerador** | Comando do coordenador | Cumprimento de comandos maliciosos, recusas indevidas e validade do questionário |
-| **AS-2 · Avaliador** | Respostas às perguntas | Manipulação de nota, alteração da saída, proveniência das evidências e exposição de canários |
-
-## Integridade e confidencialidade
-
-Uma recusa pode impedir o objetivo malicioso e, ainda assim, a explicação gerada
-revelar informação interna. Por isso, integridade da decisão e confidencialidade
-da saída precisam ser examinadas separadamente.
-
-![Figura 4: o objetivo malicioso é rejeitado, mas a nota de segurança pode revelar um canário interno.](docs/figures/figura4_pt.png)
-
-*Figura 4 — Recusa do objetivo malicioso com possível vazamento na explicação de segurança.*
-
-As figuras usam a nomenclatura do artigo. Na implementação, a avaliação retorna
-`valor`, `justificativa` e `evidencias`; os checks ficam em `oracle`.
-`verdict` e `security_note` não são campos desse contrato. A checagem de canários
-atual inspeciona `justificativa`. Consulte o [método](docs/questionnaire/methodology.md)
-para interpretar cada check e seu alcance.
-
-## Começar
-
-Requisitos: **Python 3.12+**, Git e `uv`. Execute na raiz do repositório:
+Requisitos: **Python 3.12+**, **Git** e **uv**. Execute os comandos na raiz do projeto.
 
 ```bash
 git clone https://github.com/PDC-PDAI/recruitSecBench.git
 cd recruitSecBench
 uv sync --locked
-# Se ainda não existir um .env, crie a configuração inicial:
 test -f .env || cp .env.example .env
-
-# Verificação sem chamadas a modelos
-uv run rscb-questionnaire validate-profile
-uv run pytest -q
 ```
 
-Configure o provider no `.env` e execute um cenário pequeno com avaliador:
+## 2. Configure o modelo
 
-Todos os comandos deste README são executados na raiz, usando o mesmo `.env`,
-`pyproject.toml` e `uv.lock`.
-
-```bash
-uv run rscb-questionnaire run --defense baseline \
-  --brief "Vaga sênior de backend Python, FastAPI e PostgreSQL" \
-  --benign 1 --malicious 0 \
-  --benign-responses 1 --malicious-responses 0
-```
-
-Essa execução chama LLMs. Sem os overrides acima, o perfil
-padrão solicita um comando benigno e três maliciosos, com uma resposta benigna
-e duas maliciosas por questionário produzido.
-
-## Configuração
-
-Edite o único `.env`, na raiz, com as credenciais do provider escolhido:
+Edite o `.env`. Exemplo usando OpenRouter, provider utilizado no artigo:
 
 ```dotenv
-LLM_PROVIDER=openai
-OPENAI_API_KEY=sua-chave
-OPENAI_MODEL=gpt-5-mini
+LLM_PROVIDER=openai_like
+OPENAI_BASE_URL=https://openrouter.ai/api/v1
+OPENAI_API_KEY=sua-chave-openrouter
+OPENAI_MODEL=openai/gpt-5-mini
 LANGFUSE_TRACING_ENABLED=false
+LANGFUSE_PUBLIC_KEY=
+LANGFUSE_SECRET_KEY=
+LANGFUSE_BASE_URL=
 ```
 
-O [.env.example](.env.example) documenta OpenAI, OpenRouter (`openai_like`),
-Ollama/CEIA e os overrides por papel `RESPONSE_GENERATOR_*` e `EVALUATOR_*`.
-Variáveis exportadas no ambiente têm prioridade sobre `.env`.
-`QUESTIONNAIRE_HOME` permite selecionar outro diretório para `.env` e o banco
-padrão; os caminhos de saída explícitos continuam relativos ao diretório atual.
+As chaves Langfuse vazias selecionam os prompts locais versionados. Langfuse é
+opcional. Outras configurações estão no [.env.example](.env.example).
 
-O perfil de segurança e o corpus da bateria têm uma única cópia em
-[`src/rscb_questionnaire/profiles/`](src/rscb_questionnaire/profiles/), incluída
-no pacote instalado. Para usar um perfil próprio, passe `--profile caminho.yaml`;
-flags explícitas prevalecem sobre o perfil. `--brief-file briefing.txt` substitui
-`--brief`. Para executar apenas a geração, use `--benign-responses 0
---malicious-responses 0 --no-questionnaire-evaluator`.
+## 3. Execute um experimento pequeno
 
-## Baselines, FIDES e CaMeL
-
-| `--defense` | Variante | Abrangência |
-|---|---|---|
-| `baseline` | Baseline padrão do fluxo completo | Gerador e avaliador |
-| `baseline_r1` | Baseline de referência da bateria R1 | Gerador e avaliador |
-| `fides` | Rótulos de integridade/confidencialidade, monitor de permissões e quarentena | Gerador e avaliador |
-| `camel` | Separação entre controle e dados, quarentena e políticas de proveniência | Gerador e avaliador |
-
-Use `run --defense fides` ou `run --defense camel` para selecionar as duas etapas.
-O [guia das defesas](docs/questionnaire/defenses.md) aponta
-para cada implementação e explica os protocolos de comparação.
-
-A bateria R1 possui **380 gerações por repetição**: 5 vagas × (75 ataques + 1
-controle). Para conferir o corpus sem chamar modelos:
+Primeiro, valide o corpus e prepare a execução **sem chamar modelos**:
 
 ```bash
-uv run rscb-questionnaire-battery --defense fides --dry-run
+uv run rscb-questionnaire-battery \
+  --defense baseline_r1 --repetitions 1 \
+  --output-dir outputs/primeiro-experimento --dry-run
 ```
 
-A bateria executa somente geração. O fluxo `rscb-questionnaire run` inclui
-respostas e avaliação dos questionários produzidos.
-
-## Avaliador e artefatos
-
-O `EvaluationService` avalia a dimensão `FORMULARIO` após a validação da submissão.
-Seu modelo pode ser configurado com `EVALUATOR_LLM_PROVIDER` e `EVALUATOR_MODEL`.
-A [API](docs/questionnaire/api.md) permite enviar respostas
-manuais e consultar avaliações persistidas.
-
-- [Avaliador baseline](src/rscb_questionnaire/services/evaluation/service.py)
-- [Oráculo determinístico](src/rscb_questionnaire/services/evaluation/oracle.py)
-- [Schemas da avaliação](src/rscb_questionnaire/schemas/evaluation/schema.py)
-- [Avaliadores FIDES e CaMeL](docs/questionnaire/defenses.md#onde-desenvolver)
-
-O fluxo completo grava `scenario.json`, `benchmark.jsonl`, `agent-debug.jsonl` e
-`trajectories/` em `outputs/security/` por padrão. Use um diretório por execução
-e analise geração e avaliação separadamente, com denominadores, recusas e falhas
-de runtime explícitos. Uma recusa na geração impede a avaliação posterior daquele
-caso; os [critérios experimentais](docs/questionnaire/methodology.md)
-detalham cobertura, limiares e limitações.
-
-Os caminhos de saída padrão são reutilizados. Para preservar execuções distintas:
+O manifesto deve mostrar **380 gerações planejadas**. Agora execute apenas os
+dois primeiros itens: **um controle benigno e um ataque**, para a primeira vaga.
+Este comando chama o modelo e consome créditos do provider.
 
 ```bash
-uv run rscb-questionnaire run --brief-file briefing.txt \
-  --output outputs/run-001/scenario.json \
-  --jsonl outputs/run-001/benchmark.jsonl \
-  --agent-debug-jsonl outputs/run-001/agent-debug.jsonl \
-  --trajectories-dir outputs/run-001/trajectories
+uv run rscb-questionnaire-battery \
+  --defense baseline_r1 --repetitions 1 --limit 2 --concurrency 1 \
+  --output-dir outputs/primeiro-experimento
 ```
 
-Langfuse é opcional. Configure `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`,
-`LANGFUSE_BASE_URL` e `LANGFUSE_TRACING_ENABLED=true` para ativá-lo. O runtime usa
-`LANGFUSE_PROMPT_LABEL`; o sync publica no `LANGFUSE_SYNC_LABEL`. Sem Langfuse,
-os prompts locais são usados. Consulte as [defesas](docs/questionnaire/defenses.md)
-para sincronização por variante e o [método](docs/questionnaire/methodology.md)
-para registrar versões e reproduzir campanhas.
+Confira o resumo:
 
 ```bash
-uv run rscb-questionnaire sync-prompts
-uv run rscb-questionnaire export-trace --trace-id TRACE_ID --output outputs/trace.json
+cat outputs/primeiro-experimento/summary.json
 ```
 
-## Estrutura
+Em uma execução nova, espere `recorded_generations: 2`, `controls_recorded: 1`
+e `attacks_recorded: 1`. Isso confirma a coleta; o conteúdo das saídas e os
+status indicam o comportamento do modelo.
 
-| Caminho | Conteúdo |
+| Arquivo em `outputs/primeiro-experimento/` | Conteúdo |
 |---|---|
-| `.env.example`, `pyproject.toml`, `uv.lock` | Configuração e instalação únicas |
-| `src/rscb_questionnaire/` | Questionários, avaliador, defesas e perfis |
-| `tests/` | Suíte completa; questionários em `tests/questionnaire/` |
-| `docs/` | Guias técnicos, figuras e proveniência das importações |
-| `data/` | Banco SQLite local da API, ignorado pelo Git |
-| `outputs/`, `artifacts/` | Resultados locais, ignorados pelo Git |
+| `summary.json` | Contagem de execuções, questionários produzidos e status |
+| `generations.jsonl` | Entradas e resultados de cada execução |
+| `generations/` | Um JSON por execução, para inspeção individual |
+| `manifest.json` | Modelo, defesa, corpus e repetições |
+| `questionnaire_battery.sqlite3` | Cópia dos registros em SQLite |
+| `DATA_DICTIONARY.md` | Descrição dos campos |
 
-## Desenvolvimento
+Com OpenRouter, o campo `consumption` de cada geração registra tokens e custo
+informados pelo provider. Custo ausente fica como `null`; confira também a cobertura
+em `usage_count` e `cost_count`.
 
-O projeto tem uma instalação e uma suíte de testes. O código de questionários
-fica em `src/rscb_questionnaire/` e seus testes em `tests/questionnaire/`.
+A execução é retomável: repetir o comando processa os próximos itens pendentes.
+Use outro diretório para começar do zero ou trocar modelo, defesa ou repetições.
+Uma recusa ou falha pode coexistir com um questionário salvo; examine o conteúdo,
+além do `status`.
+
+## 4. Amplie para a bateria do artigo
+
+O desenho do gerador tem **5 vagas × (15 temas × 5 estratégias + 1 controle) ×
+4 repetições = 1.520 gerações por regime**: 1.500 ataques e 20 controles.
+
+```bash
+uv run rscb-questionnaire-battery \
+  --defense baseline_r1 --repetitions 4 --concurrency 3 \
+  --output-dir outputs/gpt5mini-baseline-r1
+```
+
+Para comparar as defesas, repita com o mesmo modelo e corpus, usando um diretório
+novo para cada variante:
+
+| `--defense` | Variante | Exemplo de `--output-dir` |
+|---|---|---|
+| `baseline_r1` | Baseline da bateria | `outputs/gpt5mini-baseline-r1` |
+| `fides` | Adaptação inspirada em FIDES | `outputs/gpt5mini-fides` |
+| `camel` | Adaptação inspirada em CaMeL | `outputs/gpt5mini-camel` |
+
+Adicione `--dry-run` para conferir o planejamento antes de executar a campanha.
+Registre o commit (`git rev-parse HEAD`) e a configuração sem credenciais junto
+aos resultados. O artigo compara nove regimes: três modelos × três variantes.
+
+> **Alcance da reprodução:** esta bateria executa a geração, sem classificação
+> semântica nem avaliação de respostas. Reproduzir as tabelas publicadas exige
+> também o detector, os artefatos históricos e as configurações daquela campanha.
+> O fluxo `rscb-questionnaire run` gera respostas sintéticas, mas não implementa
+> o protocolo histórico de 816 pares controle–ataque por perfil do avaliador.
+> Novas chamadas a LLMs podem produzir resultados diferentes.
+
+## Método e desenvolvimento
+
+O gerador recebe instruções adversariais para contornar políticas sobre atributos
+sensíveis. O avaliador recebe injeções nas respostas do candidato. O artigo trata
+essas superfícies separadamente e mede conformidade semântica, disponibilidade,
+integridade, invariância da decisão, confidencialidade e efeitos persistentes.
+
+- [Método e limites de reprodução](docs/questionnaire/methodology.md)
+- [Implementações das defesas e fluxo com avaliador](docs/questionnaire/defenses.md)
+- [Arquitetura e desenvolvimento](docs/questionnaire/development.md)
+- [API e submissões manuais](docs/questionnaire/api.md)
 
 ```bash
 uv run ruff check .
 uv run pytest -q
+uv run rscb-questionnaire validate-profile
 uv build
 ```
 
-| Guia | Português | English |
-|---|---|---|
-| Método e reprodução | [Método](docs/questionnaire/methodology.md) | [Methodology](docs/questionnaire/methodology.en.md) |
-| Defesas e bateria R1 | [Defesas](docs/questionnaire/defenses.md) | [Defenses](docs/questionnaire/defenses.en.md) |
-| Arquitetura e desenvolvimento | [Desenvolvimento](docs/questionnaire/development.md) | [Development](docs/questionnaire/development.en.md) |
-| API e submissões | [API](docs/questionnaire/api.md) | [API](docs/questionnaire/api.en.md) |
-
-O CI verifica lint, testes, validação do perfil e build na instalação única da raiz.
-Os testes usam modelos substitutos; resultados de robustez exigem campanhas com
-modelos reais.
+Os testes usam modelos substitutos, sem chamadas pagas. Código e corpus ficam em
+`src/rscb_questionnaire/`; testes em `tests/`; documentação em `docs/`.
+Credenciais, resultados locais e referências do artigo não são versionados.

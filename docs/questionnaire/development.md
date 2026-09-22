@@ -56,8 +56,13 @@ Os testes cobrem modelos substitutos, respostas adversariais, proveniência,
 submissões, exportação e API. O CI verifica o experimento na instalação única da raiz.
 Não há execução paga de LLM nem sincronização de prompts remotos durante testes.
 
-Os registros históricos da importação ficam em
-[`docs/provenance/`](../provenance/). Os caminhos e hashes nesses JSONs descrevem
-a importação original, anterior à organização em `src/` e `tests/questionnaire/`;
-não são manifestos do estado atual. Os prompts, corpus e revisões históricas das
-defesas foram preservados nesta reorganização.
+## Por que manter testes
+
+Os 13 arquivos de teste verificam corpus e retomada da bateria, contratos de
+entrada/saída, oráculos, isolamento das defesas, configuração, persistência e
+traces. Eles não são executados durante uma campanha. Os checks comuns dos
+baselines são compartilhados; não há uma suíte duplicada por baseline.
+
+A frente futura de recuperação de erros e os templates de planejamento SpecKit
+foram retirados do artefato. O pacote mantém a frente `security` e os registros
+de trajetória necessários à auditoria do artigo.

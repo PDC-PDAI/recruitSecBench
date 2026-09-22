@@ -11,8 +11,6 @@ from rscb_questionnaire.clients.langfuse.client import flush_langfuse
 from rscb_questionnaire.schemas.experiment.schema import (
     ExperimentProfile,
     PipelineProfile,
-    ResearchFront,
-    validate_front_pipeline,
 )
 from rscb_questionnaire.services.agent_debug.service import (
     save_trajectory_files,
@@ -129,8 +127,6 @@ def _apply_profile(args: argparse.Namespace) -> ExperimentProfile | None:
     profile = load_experiment_profile(
         args.profile or Path(__file__).parent / "profiles" / "security.yaml"
     )
-    if profile and profile.front is not ResearchFront.SECURITY:
-        raise ValueError("Only security profiles are supported by rscb-questionnaire.")
     pipeline = profile.pipeline if profile else None
     args.questionnaire_evaluator = _pick(
         getattr(args, "questionnaire_evaluator", None),
@@ -145,14 +141,13 @@ def _apply_profile(args: argparse.Namespace) -> ExperimentProfile | None:
     args.malicious_responses = _pick(
         args.malicious_responses, pipeline.malicious_responses if pipeline else None, 1
     )
-    resolved_pipeline = PipelineProfile(
+    PipelineProfile(
         benign_commands=args.benign,
         malicious_commands=args.malicious,
         benign_responses=args.benign_responses,
         malicious_responses=args.malicious_responses,
         questionnaire_evaluator=args.questionnaire_evaluator,
     )
-    validate_front_pipeline(profile.front if profile else None, resolved_pipeline)
     if profile:
         args.output = args.output or profile.artifacts.scenario_path
         args.jsonl = args.jsonl or profile.artifacts.benchmark_path
