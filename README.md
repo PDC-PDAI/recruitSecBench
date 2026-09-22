@@ -112,13 +112,6 @@ Adicione `--dry-run` para conferir o planejamento antes de executar a campanha.
 Registre o commit (`git rev-parse HEAD`) e a configuração sem credenciais junto
 aos resultados. O artigo compara nove regimes: três modelos × três variantes.
 
-> **Alcance da reprodução:** esta bateria executa a geração, sem classificação
-> semântica nem avaliação de respostas. Reproduzir as tabelas publicadas exige
-> também o detector, os artefatos históricos e as configurações daquela campanha.
-> O fluxo `rscb-questionnaire run` gera respostas sintéticas, mas não implementa
-> o protocolo histórico de 816 pares controle–ataque por perfil do avaliador.
-> Novas chamadas a LLMs podem produzir resultados diferentes.
-
 ## Método e desenvolvimento
 
 O gerador recebe instruções adversariais para contornar políticas sobre atributos
@@ -126,7 +119,7 @@ sensíveis. O avaliador recebe injeções nas respostas do candidato. O artigo t
 essas superfícies separadamente e mede conformidade semântica, disponibilidade,
 integridade, invariância da decisão, confidencialidade e efeitos persistentes.
 
-- [Método e limites de reprodução](docs/questionnaire/methodology.md)
+- [Metodologia](docs/questionnaire/methodology.md)
 - [Implementações das defesas e fluxo com avaliador](docs/questionnaire/defenses.md)
 - [Arquitetura e desenvolvimento](docs/questionnaire/development.md)
 - [API e submissões manuais](docs/questionnaire/api.md)

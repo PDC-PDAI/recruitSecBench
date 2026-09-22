@@ -112,13 +112,6 @@ Add `--dry-run` to inspect the plan before executing the campaign.
 Record the commit (`git rev-parse HEAD`) and configuration without credentials
 alongside the results. The paper compares nine regimes: three models × three variants.
 
-> **Reproduction scope:** this battery runs generation, without semantic
-> classification or answer evaluation. Reproducing the published tables also
-> requires the detector, historical artifacts, and campaign configurations.
-> The `rscb-questionnaire run` workflow generates synthetic answers but does not
-> implement the historical evaluator protocol of 816 control–attack pairs per
-> profile. New LLM calls can produce different results.
-
 ## Method and development
 
 The generator receives adversarial instructions intended to evade policies on
@@ -126,7 +119,7 @@ sensitive attributes. The evaluator receives injections in candidate answers.
 The paper treats these surfaces separately and measures semantic compliance,
 availability, integrity, decision invariance, confidentiality, and persistent effects.
 
-- [Method and reproduction limits](docs/questionnaire/methodology.en.md)
+- [Methodology](docs/questionnaire/methodology.en.md)
 - [Defense implementations and the evaluator workflow](docs/questionnaire/defenses.en.md)
 - [Architecture and development](docs/questionnaire/development.en.md)
 - [API and manual submissions](docs/questionnaire/api.en.md)
