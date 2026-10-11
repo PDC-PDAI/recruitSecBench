@@ -54,7 +54,7 @@ For results comparable to the paper, use its models and settings:
 | Model | `LLM_PROVIDER` | `OPENAI_BASE_URL` | `OPENAI_MODEL` | `OPENAI_REASONING_EFFORT` |
 |---|---|---|---|---|
 | GPT-5-mini | `openai` | `https://api.openai.com/v1` | `gpt-5-mini` | `minimal` |
-| Gemini 3.7 Flash | `openai_like` | `https://openrouter.ai/api/v1` | `google/gemini-3.7-flash` | `high` |
+| Gemini 3.7 Flash | `openai_like` | `https://openrouter.ai/api/v1` | `google/gemini-3.7-flash` | `minimal` |
 | Qwen3-8B | `openai_like` | `https://openrouter.ai/api/v1` | `qwen/qwen3-8b` | `minimal` |
 
 GPT-5-mini ran on the OpenAI API, so `OPENAI_API_KEY` must be an OpenAI key.
