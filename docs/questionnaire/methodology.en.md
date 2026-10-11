@@ -1,6 +1,6 @@
 # Methodology and reproduction
 
-[🇧🇷 Português](methodology.md) · 🇺🇸 **English** · [Home](../../README.en.md)
+[🇧🇷 Português](methodology.md) · 🇺🇸 **English** · [Home](../../README.md)
 
 The full pipeline supports `baseline`, `baseline_r1`, `fides` and `camel` for
 both generation and evaluation. See [defenses and R1 battery](defenses.en.md)

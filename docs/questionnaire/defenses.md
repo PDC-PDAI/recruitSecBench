@@ -1,6 +1,6 @@
 # Baselines, FIDES, CaMeL e bateria R1
 
-🇧🇷 **Português** · [🇺🇸 English](defenses.en.md) · [Início](../../README.md)
+🇧🇷 **Português** · [🇺🇸 English](defenses.en.md) · [Início](../../README.pt-BR.md)
 
 ## Variantes experimentais
 

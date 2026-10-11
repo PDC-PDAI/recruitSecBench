@@ -1,6 +1,6 @@
 # Arquitetura e desenvolvimento
 
-🇧🇷 **Português** · [🇺🇸 English](development.en.md) · [Início](../../README.md)
+🇧🇷 **Português** · [🇺🇸 English](development.en.md) · [Início](../../README.pt-BR.md)
 
 ## Ambiente e configuração
 

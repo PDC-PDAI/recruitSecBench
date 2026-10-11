@@ -1,6 +1,6 @@
 # Baselines, FIDES, CaMeL and the R1 battery
 
-[🇧🇷 Português](defenses.md) · 🇺🇸 **English** · [Home](../../README.en.md)
+[🇧🇷 Português](defenses.md) · 🇺🇸 **English** · [Home](../../README.md)
 
 ## Experimental variants
 

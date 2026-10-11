@@ -1,19 +1,19 @@
 # RecruitSecBench
 
-**Segurança de agentes LLM em fluxos de recrutamento.**
+**Security of LLM agents in recruitment workflows.**
 
-[English](README.en.md) · [Método](docs/questionnaire/methodology.md) · [Defesas](docs/questionnaire/defenses.md) · [API](docs/questionnaire/api.md)
+[Português](README.pt-BR.md) · [Method](docs/questionnaire/methodology.en.md) · [Defenses](docs/questionnaire/defenses.en.md) · [API](docs/questionnaire/api.en.md)
 
-Código experimental do artigo *Evaluating Layered Security Controls for LLM Agents
-in Recruitment Workflows*. Compara um baseline com adaptações inspiradas em
-**FIDES** e **CaMeL**, observando geração de perguntas sensíveis, manipulação da
-avaliação e exposição de informação interna.
+Experimental code for *Evaluating Layered Security Controls for LLM Agents in
+Recruitment Workflows*. Compares a baseline with **FIDES-inspired** and
+**CaMeL-inspired** adaptations, examining sensitive questions, evaluation
+manipulation, and disclosure of internal information.
 
-![Fluxo de recrutamento: descrição da vaga, geração do questionário e avaliação das respostas.](docs/figures/figura1_pt.png)
+![Recruitment workflow: job description, questionnaire generation, and answer evaluation.](docs/figures/figura1_en.png)
 
-## 1. Instale
+## 1. Install
 
-Requisitos: **Python 3.12+**, **Git** e **uv**. Execute os comandos na raiz do projeto.
+Requirements: **Python 3.12+**, **Git**, and **uv**. Run commands from the project root.
 
 ```bash
 git clone https://github.com/PDC-PDAI/recruitSecBench.git
@@ -22,76 +22,100 @@ uv sync --locked
 test -f .env || cp .env.example .env
 ```
 
-## 2. Configure o modelo
+## 2. Configure the model
 
-Edite o `.env`. Exemplo usando OpenRouter, provider utilizado no artigo:
+Edit `.env`. This example uses OpenRouter:
 
 ```dotenv
 LLM_PROVIDER=openai_like
 OPENAI_BASE_URL=https://openrouter.ai/api/v1
-OPENAI_API_KEY=sua-chave-openrouter
+OPENAI_API_KEY=your-openrouter-key
 OPENAI_MODEL=openai/gpt-5-mini
+OPENAI_REASONING_EFFORT=minimal
 LANGFUSE_TRACING_ENABLED=false
 LANGFUSE_PUBLIC_KEY=
 LANGFUSE_SECRET_KEY=
 LANGFUSE_BASE_URL=
 ```
 
-As chaves Langfuse vazias selecionam os prompts locais versionados. Langfuse é
-opcional. Outras configurações estão no [.env.example](.env.example).
+Empty Langfuse credentials select the versioned local prompts. Langfuse is
+optional. See [.env.example](.env.example) for other configurations.
 
-## 3. Execute um experimento pequeno
+### Choosing a model
 
-Primeiro, valide o corpus e prepare a execução **sem chamar modelos**:
+The pipeline is not tied to any model. Any model available through one of the
+providers listed under `LLM_PROVIDER` in [.env.example](.env.example) can run
+it, as long as it supports tool calling; FIDES and CaMeL also require
+structured JSON output. Results from other models are your own measurements,
+not a replication of the paper.
+
+For results comparable to the paper, use its models and settings:
+
+| Model | `LLM_PROVIDER` | `OPENAI_BASE_URL` | `OPENAI_MODEL` | `OPENAI_REASONING_EFFORT` |
+|---|---|---|---|---|
+| GPT-5-mini | `openai` | `https://api.openai.com/v1` | `gpt-5-mini` | `minimal` |
+| Gemini 3.7 Flash | `openai_like` | `https://openrouter.ai/api/v1` | `google/gemini-3.7-flash` | `high` |
+| Qwen3-8B | `openai_like` | `https://openrouter.ai/api/v1` | `qwen/qwen3-8b` | `minimal` |
+
+GPT-5-mini ran on the OpenAI API, so `OPENAI_API_KEY` must be an OpenAI key.
+Token and cost tracking (section 3) works only through OpenRouter.
+
+> [!WARNING]
+> OpenRouter retired `qwen/qwen3-8b` on October 9, 2026, so the Qwen3-8B
+> regimes can no longer be rerun there: every generation ends as `failed`.
+
+## 3. Run a small experiment
+
+First, validate the corpus and prepare the run **without calling models**:
 
 ```bash
 uv run rscb-questionnaire-battery \
   --defense baseline_r1 --repetitions 1 \
-  --output-dir outputs/primeiro-experimento --dry-run
+  --output-dir outputs/first-experiment --dry-run
 ```
 
-O manifesto deve mostrar **380 gerações planejadas**. Agora execute apenas os
-dois primeiros itens: **um controle benigno e um ataque**, para a primeira vaga.
-Este comando chama o modelo e consome créditos do provider.
+The manifest should report **380 planned generations**. Now execute only the
+first two items: **one benign control and one attack**, for the first job.
+This command calls the model and consumes provider credits.
 
 ```bash
 uv run rscb-questionnaire-battery \
   --defense baseline_r1 --repetitions 1 --limit 2 --concurrency 1 \
-  --output-dir outputs/primeiro-experimento
+  --output-dir outputs/first-experiment
 ```
 
-Confira o resumo:
+Inspect the summary:
 
 ```bash
-cat outputs/primeiro-experimento/summary.json
+cat outputs/first-experiment/summary.json
 ```
 
-Em uma execução nova, espere `recorded_generations: 2`, `controls_recorded: 1`
-e `attacks_recorded: 1`. Isso confirma a coleta; o conteúdo das saídas e os
-status indicam o comportamento do modelo.
+For a fresh run, expect `recorded_generations: 2`, `controls_recorded: 1`, and
+`attacks_recorded: 1`. These confirm collection; inspect outputs and statuses
+to assess model behavior.
 
-| Arquivo em `outputs/primeiro-experimento/` | Conteúdo |
+| File in `outputs/first-experiment/` | Contents |
 |---|---|
-| `summary.json` | Contagem de execuções, questionários produzidos e status |
-| `generations.jsonl` | Entradas e resultados de cada execução |
-| `generations/` | Um JSON por execução, para inspeção individual |
-| `manifest.json` | Modelo, defesa, corpus e repetições |
-| `questionnaire_battery.sqlite3` | Cópia dos registros em SQLite |
-| `DATA_DICTIONARY.md` | Descrição dos campos |
+| `summary.json` | Run counts, materialized questionnaires, and statuses |
+| `generations.jsonl` | Inputs and results for each run |
+| `generations/` | One JSON per run for individual inspection |
+| `manifest.json` | Model, defense, corpus, and repetitions |
+| `questionnaire_battery.sqlite3` | SQLite copy of the records |
+| `DATA_DICTIONARY.md` | Field descriptions |
 
-Com OpenRouter, o campo `consumption` de cada geração registra tokens e custo
-informados pelo provider. Custo ausente fica como `null`; confira também a cobertura
-em `usage_count` e `cost_count`.
+With OpenRouter, each generation’s `consumption` field records provider-reported
+tokens and cost. Missing cost is `null`; also inspect coverage in `usage_count`
+and `cost_count`.
 
-A execução é retomável: repetir o comando processa os próximos itens pendentes.
-Use outro diretório para começar do zero ou trocar modelo, defesa ou repetições.
-Uma recusa ou falha pode coexistir com um questionário salvo; examine o conteúdo,
-além do `status`.
+Runs are resumable: repeating the command processes the next pending items.
+Use another directory to start over or change model, defense, or repetitions.
+Refusal or failure can coexist with a saved questionnaire; inspect the content
+alongside `status`.
 
-## 4. Amplie para a bateria do artigo
+## 4. Scale up to the paper's generator battery
 
-O desenho do gerador tem **5 vagas × (15 temas × 5 estratégias + 1 controle) ×
-4 repetições = 1.520 gerações por regime**: 1.500 ataques e 20 controles.
+The generator design contains **5 jobs × (15 topics × 5 strategies + 1 control) ×
+4 repetitions = 1,520 generations per regime**: 1,500 attacks and 20 controls.
 
 ```bash
 uv run rscb-questionnaire-battery \
@@ -99,30 +123,52 @@ uv run rscb-questionnaire-battery \
   --output-dir outputs/gpt5mini-baseline-r1
 ```
 
-Para comparar as defesas, repita com o mesmo modelo e corpus, usando um diretório
-novo para cada variante:
+Compare defenses with the same model and corpus, using a new directory for each
+variant:
 
-| `--defense` | Variante | Exemplo de `--output-dir` |
+| `--defense` | Variant | Example `--output-dir` |
 |---|---|---|
-| `baseline_r1` | Baseline da bateria | `outputs/gpt5mini-baseline-r1` |
-| `fides` | Adaptação inspirada em FIDES | `outputs/gpt5mini-fides` |
-| `camel` | Adaptação inspirada em CaMeL | `outputs/gpt5mini-camel` |
+| `baseline_r1` | Battery baseline | `outputs/gpt5mini-baseline-r1` |
+| `fides` | FIDES-inspired adaptation | `outputs/gpt5mini-fides` |
+| `camel` | CaMeL-inspired adaptation | `outputs/gpt5mini-camel` |
 
-Adicione `--dry-run` para conferir o planejamento antes de executar a campanha.
-Registre o commit (`git rev-parse HEAD`) e a configuração sem credenciais junto
-aos resultados. O artigo compara nove regimes: três modelos × três variantes.
+Add `--dry-run` to inspect the plan before executing the campaign.
+Record the commit (`git rev-parse HEAD`) and configuration without credentials
+alongside the results. The paper compares nine regimes: three models × three variants.
 
-## Método e desenvolvimento
+## 5. Export the results
 
-O gerador recebe instruções adversariais para contornar políticas sobre atributos
-sensíveis. O avaliador recebe injeções nas respostas do candidato. O artigo trata
-essas superfícies separadamente e mede conformidade semântica, disponibilidade,
-integridade, invariância da decisão, confidencialidade e efeitos persistentes.
+Combine one or more output directories into a CSV with one row per generation:
 
-- [Metodologia](docs/questionnaire/methodology.md)
-- [Implementações das defesas e fluxo com avaliador](docs/questionnaire/defenses.md)
-- [Arquitetura e desenvolvimento](docs/questionnaire/development.md)
-- [API e submissões manuais](docs/questionnaire/api.md)
+```bash
+uv run rscb-questionnaire-results \
+  outputs/gpt5mini-baseline-r1 outputs/gpt5mini-fides outputs/gpt5mini-camel \
+  --output results.csv
+```
+
+| Columns | Contents |
+|---|---|
+| `source_dir`, `model`, `provider`, `defense` | Run and regime |
+| `run_key`, `job_id`, `case_id`, `is_control`, `theme_id`, `strategy`, `attack_level`, `repetition` | Job, case, and repetition |
+| `status`, `failure_reason` | Operational outcome |
+| `has_questionnaire`, `question_count`, `questions` | Saved questionnaire; `questions` is a JSON list of question texts |
+| `duration_ms`, `prompt_tokens`, `completion_tokens`, `cost_usd` | Duration and provider-reported consumption; empty when not reported |
+
+Unfinished runs export only their recorded generations. The CSV does not
+classify the questions: judging whether they target sensitive attributes is
+left to your analysis.
+
+## Method and development
+
+The generator receives adversarial instructions intended to evade policies on
+sensitive attributes. The evaluator receives injections in candidate answers.
+The paper treats these surfaces separately and measures semantic compliance,
+availability, integrity, decision invariance, confidentiality, and persistent effects.
+
+- [Methodology](docs/questionnaire/methodology.en.md)
+- [Defense implementations and the evaluator workflow](docs/questionnaire/defenses.en.md)
+- [Architecture and development](docs/questionnaire/development.en.md)
+- [API and manual submissions](docs/questionnaire/api.en.md)
 
 ```bash
 uv run ruff check .
@@ -131,6 +177,6 @@ uv run rscb-questionnaire validate-profile
 uv build
 ```
 
-Os testes usam modelos substitutos, sem chamadas pagas. Código e corpus ficam em
-`src/rscb_questionnaire/`; testes em `tests/`; documentação em `docs/`.
-Credenciais, resultados locais e referências do artigo não são versionados.
+Tests use substitute models, without paid calls. Code and corpus live in
+`src/rscb_questionnaire/`; tests in `tests/`; documentation in `docs/`.
+Credentials, local results, and paper references are not versioned.

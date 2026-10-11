@@ -1,6 +1,6 @@
 # API de questionários e submissões
 
-🇧🇷 **Português** · [🇺🇸 English](api.en.md) · [Início](../../README.md)
+🇧🇷 **Português** · [🇺🇸 English](api.en.md) · [Início](../../README.pt-BR.md)
 
 O fluxo completo aceita `baseline`, `baseline_r1`, `fides` e `camel` no gerador
 e no avaliador. Veja [defesas e bateria R1](defenses.md) para as variantes

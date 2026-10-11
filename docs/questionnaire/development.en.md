@@ -1,6 +1,6 @@
 # Architecture and development
 
-[🇧🇷 Português](development.md) · 🇺🇸 **English** · [Home](../../README.en.md)
+[🇧🇷 Português](development.md) · 🇺🇸 **English** · [Home](../../README.md)
 
 ## Runtime and configuration
 
