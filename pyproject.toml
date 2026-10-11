@@ -28,6 +28,7 @@ dependencies = [
 [project.scripts]
 rscb-questionnaire = "rscb_questionnaire.cli:main"
 rscb-questionnaire-battery = "rscb_questionnaire.battery:main"
+rscb-questionnaire-results = "rscb_questionnaire.results:main"
 
 [dependency-groups]
 dev = [
